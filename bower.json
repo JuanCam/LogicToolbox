@@ -1,0 +1,32 @@
+{
+  "name": "logic-tools",
+  "description": "Logic tools is an app for logic studies",
+  "main": "index.js",
+  "authors": [
+    "JuanCam"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "logic",
+    "fitch",
+    "truth",
+    "table"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "^1.6.3",
+    "angular-ui-router": "^0.4.2",
+    "angular-bootstrap": "^2.5.0",
+    "bootstrap": "^3.3.7",
+    "lodash": "^4.17.4",
+    "angular-mocks": "^1.6.3"
+  }
+}

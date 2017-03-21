@@ -1,0 +1,23 @@
+{
+  "name": "logic-tools",
+  "version": "1.0.0",
+  "description": "Logic tools is an app for logic studies",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "logic",
+    "fitch",
+    "truth",
+    "table"
+  ],
+  "author": "JuanCam",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-jasmine-node": "^1.0.7",
+    "jasmine": "^2.5.3"
+  }
+}
