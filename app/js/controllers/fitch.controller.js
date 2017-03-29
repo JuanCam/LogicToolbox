@@ -9,11 +9,11 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
-        this.premise = '((p=>q)=>r)=>(q=>r)';
-      
+        this.premise = '';
+
         this.assume = function() {
             var currentScope, labels;
-            
+
             headPremise = Premise.new({
                 value: this.premise
             });
@@ -95,14 +95,6 @@ angular
                     filter(function(premise) {
                         return scopeIds.indexOf(premise.scopeId) !== -1;
                     });
-        }
-
-        function _asociateLabels(premise) {
-            return _.chain(premise.value)
-                        .keys()
-                        .map(function(val, key) {
-                                  return (val in this.labels) ? this.labels[val] : val;
-                              }.bind(premise)).value();
         }
 
         function _uncheckPremises(premises, selected) {
