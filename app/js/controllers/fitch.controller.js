@@ -105,7 +105,4 @@ angular
             });
         }
 
-        function _breakImplication(premise) {
-            return premise.structure.split(/[=][>]/g);
-        }
     });
