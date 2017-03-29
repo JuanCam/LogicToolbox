@@ -33,6 +33,6 @@
 <div class="fitch-structure col-sm-10 col-sm-offset-1">
     <div class="fitch-premise" ng-repeat="premise in fitch.premises track by $index">
         <input type="checkbox" ng-model="premise.checked">
-        <div ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.lang}}</div>
+        <div ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
     </div>
 </div>

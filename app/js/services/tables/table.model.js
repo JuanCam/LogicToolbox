@@ -6,7 +6,7 @@ angular.module('logicToolsApp')
         Table.prototype.getCompoundValue = function(premise, key, tableValue) {
             var ca, cb, c, a, b, getFormula, atomics, values;
             getFormula = formula.resultFn(premise);
-            atomics = premise.match(/\w+|[~]+\w/g);
+            atomics = premise.match(/\w+|[~]+\w|\d+|[~]+\d/g);
             values = [];
             ca = negateColumn(tableValue, atomics[0]);
             cb = negateColumn(tableValue, atomics[1]);

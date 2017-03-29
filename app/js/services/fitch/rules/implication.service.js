@@ -5,10 +5,9 @@ angular.module('logicToolsApp')
 
     	this.introduction = function(scope, lastScope) {
 			return Premise.new({
-                conclusion: lastScope.last.lang,
 				scopeLayer: scope.layer,
 				scopeId: scope.id,
-				value: lastScope.head.lang
+				value: lastScope.head.value + '=>' + lastScope.last.value,
 			});
     	};
 
@@ -19,16 +18,19 @@ angular.module('logicToolsApp')
             return newPremise;
     	};
 
-    	function eliminate(premiseOne, premiseTwo, scope) {
-    		if (premiseOne.conclusion && !premiseTwo.conclusion) {
-    			if (premiseOne.value === premiseTwo.value) {
-    				return Premise.new({
-    					scopeLayer : scope.layer,
-    					scopeId : scope.id,
-    					value: premiseOne.conclusion
-    				});
-    			}
-    		}
+    	function eliminate(premiseOne, premiseTwo, scope) {    
+            var assumption, conclusion, structure;
+            structure = premiseOne.digest();
+            assumption = premiseOne.getAssumption(structure);
+            assumption = premiseOne.expand(assumption);
+			if (assumption === premiseTwo.value) {
+                conclusion = premiseOne.getConclusion(structure);
+				return Premise.new({
+					scopeLayer : scope.layer,
+					scopeId : scope.id,
+					value: premiseOne.expand(conclusion)
+				});
+			}
     		return null;
     	}
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('logicToolsApp')
-    .service('tableGenerator', function(ALIASES, Premise, Table) {
+    .service('tableGenerator', function(Premise, Table) {
         var basePremise, table;
 
         this.generate = function(premise) {
@@ -17,7 +17,6 @@ angular.module('logicToolsApp')
             this.value = buildAtomicColumn(atomicPremises);
             this.value = _.assign({}, this.value, buildCompoundColumn(this.value));
             this.labels = basePremise.labels;
-            
         };
 
         function reset() {
@@ -51,7 +50,7 @@ angular.module('logicToolsApp')
             var values;
             values = _.assign({}, tableValue);
             basePremise.digest(function(premise, value, label) {
-                values[label] = table.getCompoundValue(premise, label, values); 
+                values[label] = table.getCompoundValue(premise, label, values);
             });
             return values;
         }

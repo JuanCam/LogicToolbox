@@ -11,6 +11,7 @@ var scripts = [
     'app/js/services/*.js',
     'app/js/services/fitch/*.js',
     'app/js/services/fitch/rules/*.js',
+    'app/js/services/premise/*.js',
     'app/js/services/tables/*.js'
 ];
 var allFiles = templates.concat(styles).concat(scripts);

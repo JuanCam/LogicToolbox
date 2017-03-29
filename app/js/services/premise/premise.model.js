@@ -1,31 +1,61 @@
 angular.module('logicToolsApp')
-    .factory('Premise', function(ALIASES) {
+    .factory('Premise', function() {
 
     	function Premise(props) {
-    		var labelIndex = 0;
-    		this.value = props.value;
+    		var labelIndex, labelConst;
+    		labelIndex = 0;
     		this.labels = {};
+    		this.scopeLayer = props.scopeLayer;
+    		this.scopeId = props.scopeId;
+    		this.value = props.value;
+
     		this.digest = function(callback) {
-    			var premises, label, labels, value;
+    			var premises, copyPremise, label, labels, value;
+    			value = this.value;
     			premises = [];
     			labels = {};
-    			value = this.value;
     			while(premises) {
     				premises = breakPremise(value);
     				_.each(extractPremises(value), function(premise) {
-    					label = ALIASES[labelIndex];
-    					labels[label] = createLabels(labels, label, premise);
-    					value = reducePremise(value, premise, label);
+    					label =  labelIndex + 1;
+    					copyPremise = premise.slice();
+    					labels[label] = createLabels(labels, label, copyPremise);
+    					value = reducePremise(value, unwrap(premise), label);
     					if (callback) {
     						callback(premise, value, label);
     					}
     					labelIndex++;
     				});
     			}
-    			this.labels = labels;
+    			this.labels = _.assign({}, labels);
     			return value;
     		}
     	}
+
+    	Premise.prototype.isImplication = function(structrue) {
+            return /[=][>]/g.exec(structrue);
+        };
+        Premise.prototype.isAnd = function (structrue) {
+            return /[&]/g.exec(structrue);
+        };
+        Premise.prototype.isOr = function (structrue) {
+            return /[|]/g.exec(structrue);
+        };
+        Premise.prototype.isBicon = function (structrue) {
+            return /[<][=][>]/g.exec(structrue);
+        };
+        Premise.prototype.expand = function(premiseLabel) {
+        	var premise = this.labels[premiseLabel];
+        	return (premise) ? unwrap(premise) : premiseLabel;
+        };
+        Premise.prototype.getAssumption = function(structrue) {
+        	var valuesMatched = structrue.split(/[=][>]/g);
+        	return (valuesMatched) ? valuesMatched[0] : undefined;
+        }
+        Premise.prototype.getConclusion = function(structrue) {
+        	var valuesMatched = structrue.split(/[=][>]/g)
+        	return (valuesMatched) ? valuesMatched[1] : undefined;
+        }
 
         function breakPremise(value) {
         	return value.match(/[(]{1}[\w~<=>|&]+(?=[)]{1})[)]{1}/g);
@@ -48,6 +78,11 @@ angular.module('logicToolsApp')
             subPremise = subPremise.replace(/[|]/g, '[|]'); //This is special for the 'or' character.
             matchExpr = new RegExp('[(]' + subPremise + '[)]', 'g');
             return premise.replace(matchExpr, label);
+        }
+
+        function unwrap(value) {
+        	var unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
+        	return (unwraped) ? unwraped[1] : value;
         }
         
     	return {

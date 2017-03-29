@@ -29,11 +29,11 @@ angular.module('logicToolsApp')
     	};
 
     	function validImplications(premiseOne, premiseTwo) {
-    		return premiseOne.conclusion && premiseTwo.conclusion;
+    		return premiseOne.isImplication() && premiseTwo.isImplication();
     	}
 
     	function validPremises(premiseOne, premiseTwo) {
-    		return premiseOne.value === premiseTwo.value;
+    		return getPremiseAssumption(premiseOne) === getPremiseAssumption(premiseTwo);
     	}
 
     	function validNegations(premiseOne, premiseTwo) {
@@ -62,6 +62,13 @@ angular.module('logicToolsApp')
 
         function removeNegation(premise) {
         	return premise.replace(/[~()]+/g,'');
+        }
+
+        function getPremiseAssumption(premise) {
+            var structure, assumption;
+            structure = premise.digest();
+            assumption = premise.getAssumption(structure);
+            return premise.expand(assumption);
         }
 
 });

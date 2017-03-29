@@ -2,13 +2,13 @@
 
 angular
   .module('logicToolsApp')
-  .controller('FitchCtrl', function (FitchStructure, Premise, fitchNegation, fitchImplication, formula) {
+  .controller('FitchCtrl', function (FitchStack, Premise, fitchNegation, fitchImplication, formula) {
         var newPremise, headPremise;
 
         this.marginLeft = 16;
         this.premises = [];
         this.selected = [];
-        this.structure = FitchStructure.new();
+        this.structure = FitchStack.new();
         this.premise = '((p=>q)=>r)=>(q=>r)';
       
         this.assume = function() {

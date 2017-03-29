@@ -1,12 +1,12 @@
 angular.module('logicToolsApp')
-    .factory('FitchStructure', function(Scope) {
+    .factory('FitchStack', function(Scope) {
 
       var scopeLayer = 0;
-      function FitchStructure(props) {
+      function FitchStack(props) {
         this.scopes = [];
       }
 
-      FitchStructure.prototype.closeScope = function() {
+      FitchStack.prototype.closeScope = function() {
           var removedScope, newCurrentScope; 
           removedScope = _.remove(this.scopes, 'isFocused');
           newCurrentScope = this.scopes[this.scopes.length - 1];
@@ -15,7 +15,7 @@ angular.module('logicToolsApp')
           return removedScope[0];
       };
 
-      FitchStructure.prototype.openScope = function(headAssumption) {
+      FitchStack.prototype.openScope = function(headAssumption) {
           var scope = Scope.new({ 
             head: headAssumption,
             layer: ++scopeLayer
@@ -31,19 +31,19 @@ angular.module('logicToolsApp')
           this.scopes.push(scope);
       };
 
-      FitchStructure.prototype.entail = function(assumption) {
+      FitchStack.prototype.entail = function(assumption) {
           var currentScope = this.getCurrentScope();
           currentScope.append(assumption);
       };
 
-      FitchStructure.prototype.getCurrentScope = function() {
+      FitchStack.prototype.getCurrentScope = function() {
           return _.filter(this.scopes, 'isFocused')[0];
       };
 
       return {
         new: function(props) {
           var fitchProps = props || {};
-          return new FitchStructure(fitchProps);
+          return new FitchStack(fitchProps);
         }
       }
     });
