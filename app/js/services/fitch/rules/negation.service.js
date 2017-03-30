@@ -4,23 +4,27 @@ angular.module('logicToolsApp')
     .service('fitchNegation', function (Premise, formula) {
 
     	this.introduction = function(premiseOne, premiseTwo, scope) {
-    		if(!validImplications(premiseOne, premiseTwo)) {
+            var newValue;
+    		if (!_validImplications(premiseOne, premiseTwo)) {
     			return null;
     		}
-    		if(!validPremises(premiseOne, premiseTwo)) {
+    		if (!_validPremises(premiseOne, premiseTwo)) {
     			return null;
     		}
-    		if(!validNegations(premiseOne, premiseTwo)) {
+    		if (!_validNegations(premiseOne, premiseTwo)) {
     			return null;
     		}
-    		if(!validConclusions(premiseOne, premiseTwo)) {
+    		if (!_validConclusions(premiseOne, premiseTwo)) {
     			return null;
     		}
+            
+            newValue = _getAssumption(premiseOne);
+            newValue = (premiseOne.getPrimitives(newValue).length > 1) ? '(' + newValue + ')' : newValue;
 
             return Premise.new({
 				scopeLayer: scope.layer,
 				scopeId: scope.id,
-            	value: '~' + premiseOne.value
+            	value: '~' + newValue
             });
     	};
 
@@ -28,47 +32,51 @@ angular.module('logicToolsApp')
     		return Premise.new({})
     	};
 
-    	function validImplications(premiseOne, premiseTwo) {
+    	function _validImplications(premiseOne, premiseTwo) {
     		return premiseOne.isImplication() && premiseTwo.isImplication();
     	}
 
-    	function validPremises(premiseOne, premiseTwo) {
-    		return getPremiseAssumption(premiseOne) === getPremiseAssumption(premiseTwo);
+    	function _validPremises(premiseOne, premiseTwo) {
+    		return _getAssumption(premiseOne) === _getAssumption(premiseTwo);
     	}
 
-    	function validNegations(premiseOne, premiseTwo) {
-    		return validNegation(premiseOne, premiseTwo) || validNegation(premiseTwo, premiseOne);
+    	function _validNegations(premiseOne, premiseTwo) {
+    		return _validNegation(premiseOne, premiseTwo) || _validNegation(premiseTwo, premiseOne);
     	}
 
-    	function validConclusions(premiseOne, premiseTwo) {
-    		return validConclusion(premiseOne, premiseTwo) || validConclusion(premiseTwo, premiseOne);
+    	function _validConclusions(premiseOne, premiseTwo) {
+    		return _validConclusion(premiseOne, premiseTwo) || _validConclusion(premiseTwo, premiseOne);
     	}
 
-    	function validConclusion(premiseOne, premiseTwo) {
-    		return removeNegation(premiseOne.conclusion) === premiseTwo.conclusion;
+    	function _validConclusion(premiseOne, premiseTwo) {
+    		return _removeNegation(_getConclusion(premiseOne)) === _getConclusion(premiseTwo);
     	}
 
-    	function validNegation(premiseOne, premiseTwo) {
-    		return isNegated(premiseOne.conclusion) && !isNegated(premiseTwo.conclusion);
+    	function _validNegation(premiseOne, premiseTwo) {
+    		return _isNegated(_getConclusion(premiseOne)) && !_isNegated(_getConclusion(premiseTwo));
     	}
 
-    	function isNegated(premise) {
+    	function _isNegated(premise) {
             return premise.match(/[~]+/g);
         }
 
-    	function isImplication(premise) {
-            return formula.operation(premise) === 'implication';
-        }
-
-        function removeNegation(premise) {
+        function _removeNegation(premise) {
         	return premise.replace(/[~()]+/g,'');
         }
 
-        function getPremiseAssumption(premise) {
+        function _getAssumption(premise) {
             var structure, assumption;
             structure = premise.digest();
             assumption = premise.getAssumption(structure);
             return premise.expand(assumption);
+        }
+
+        function _getConclusion(premise) {
+            var structure, conclusion, expanded;
+            structure = premise.digest();
+            conclusion = premise.getConclusion(structure);
+            expanded = premise.expand(_removeNegation(conclusion));
+            return (_isNegated(conclusion)) ? '~(' + expanded + ')': expanded;
         }
 
 });

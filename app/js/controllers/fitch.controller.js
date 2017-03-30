@@ -9,11 +9,11 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
-        this.premise = '((p=>q)=>r)=>(q=>r)';
-      
+        this.premise = '';
+
         this.assume = function() {
             var currentScope, labels;
-            
+
             headPremise = Premise.new({
                 value: this.premise
             });
@@ -68,7 +68,6 @@ angular
             reiterated = _getValidSelecedPremises(this.premises, this.structure.scopes)
                             .map(function(premise, key) {
                                 return Premise.new({
-                                    conclusion: premise.conclusion,
                                     scopeLayer: currentScope.layer,
                                     scopeId: currentScope.id,
                                     value: premise.value
@@ -97,14 +96,6 @@ angular
                     });
         }
 
-        function _asociateLabels(premise) {
-            return _.chain(premise.value)
-                        .keys()
-                        .map(function(val, key) {
-                                  return (val in this.labels) ? this.labels[val] : val;
-                              }.bind(premise)).value();
-        }
-
         function _uncheckPremises(premises, selected) {
             selected.length = 0;
             return _.map(premises, function(premise) {
@@ -113,7 +104,4 @@ angular
             });
         }
 
-        function _breakImplication(premise) {
-            return premise.structure.split(/[=][>]/g);
-        }
     });
