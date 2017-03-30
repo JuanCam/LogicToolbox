@@ -5,6 +5,7 @@ angular.module('logicToolsApp')
 
     	this.introduction = function(premiseOne, premiseTwo, scope) {
             var newValue;
+            
     		if (!_validImplications(premiseOne, premiseTwo)) {
     			return null;
     		}
@@ -17,10 +18,10 @@ angular.module('logicToolsApp')
     		if (!_validConclusions(premiseOne, premiseTwo)) {
     			return null;
     		}
-            
+            debugger
             newValue = _getAssumption(premiseOne);
             newValue = (premiseOne.getPrimitives(newValue).length > 1) ? '(' + newValue + ')' : newValue;
-
+            
             return Premise.new({
 				scopeLayer: scope.layer,
 				scopeId: scope.id,
@@ -53,11 +54,11 @@ angular.module('logicToolsApp')
     	}
 
     	function _validNegation(premiseOne, premiseTwo) {
-    		return _isNegated(_getConclusion(premiseOne)) && !_isNegated(_getConclusion(premiseTwo));
+    		return _isNegated(_getRawConclusion(premiseOne)) && !_isNegated(_getRawConclusion(premiseTwo));
     	}
 
     	function _isNegated(premise) {
-            return premise.match(/[~]+/g);
+            return premise.match(/^\~+/g);
         }
 
         function _removeNegation(premise) {
@@ -77,6 +78,13 @@ angular.module('logicToolsApp')
             conclusion = premise.getConclusion(structure);
             expanded = premise.expand(_removeNegation(conclusion));
             return (_isNegated(conclusion)) ? '~(' + expanded + ')': expanded;
+        }
+
+        function _getRawConclusion(premise, structure) {
+            var structure, conclusion;
+            structure = premise.digest();
+            conclusion = premise.getConclusion(structure);
+            return conclusion;
         }
 
 });

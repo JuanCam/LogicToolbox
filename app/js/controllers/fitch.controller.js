@@ -2,7 +2,7 @@
 
 angular
   .module('logicToolsApp')
-  .controller('FitchCtrl', function (FitchStack, Premise, fitchNegation, fitchImplication, formula) {
+  .controller('FitchCtrl', function (FitchStack, Premise, fitchNegation, fitchImplication) {
         var newPremise, headPremise;
 
         this.marginLeft = 16;

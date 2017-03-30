@@ -49,8 +49,15 @@ angular.module('logicToolsApp')
             return /[<][=][>]/g.exec(base);
         };
         Premise.prototype.expand = function(premiseLabel) {
-        	var premise = this.labels[premiseLabel];
+        	var premise, indexPremise, hasNegation;
+        	indexPremise = premiseLabel.replace(/^\~+/, '');
+        	hasNegation = premiseLabel.match(/^\~+/);
+        	premise =  this.labels[indexPremise];
+        	if (hasNegation) {
+        		return (premise) ? '~' + premise : premiseLabel;
+        	}
         	return (premise) ? _unwrap(premise) : premiseLabel;
+        	
         };
         Premise.prototype.getAssumption = function(structrue) {
         	var base, valuesMatched;
