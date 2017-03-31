@@ -7,10 +7,10 @@ angular.module('logicToolsApp')
             var headPremise, lastPremise, headValue, lastValue;
             headPremise = lastScope.head;
             lastPremise = lastScope.last;
-            headValue = (headPremise.isCompound(headPremise.value)) 
+            headValue = (headPremise.isCompound(headPremise.value))
                             ? '(' + headPremise.value + ')'
                             : headPremise.value;
-            lastValue = (lastPremise.isCompound(lastPremise.value)) 
+            lastValue = (lastPremise.isCompound(lastPremise.value))
                             ? '(' + lastPremise.value + ')'
                             : lastPremise.value;
 			return Premise.new({
@@ -27,19 +27,24 @@ angular.module('logicToolsApp')
             return newPremise;
     	};
 
-    	function eliminate(premiseOne, premiseTwo, scope) {    
-            var assumption, conclusion, structure;
-            structure = premiseOne.digest();
-            assumption = premiseOne.getAssumption(structure);
-            assumption = premiseOne.expand(assumption);
-			if (assumption === premiseTwo.value) {
-                conclusion = premiseOne.getConclusion(structure);
-				return Premise.new({
-					scopeLayer : scope.layer,
-					scopeId : scope.id,
-					value: premiseOne.expand(conclusion)
-				});
-			}
+    	function eliminate(premiseOne, premiseTwo, scope) {
+        var assumption, conclusion, structure, assumptionNegated;
+        structure = premiseOne.digest();
+        assumption = premiseOne.getAssumption(structure);
+        assumptionNegated = premiseOne.hasNegation(assumption);
+        assumption = premiseOne.expand(assumption);
+        assumption = (assumptionNegated)
+        ? assumption
+        : premiseOne.unwrap(assumption);
+
+  			if (assumption === premiseTwo.value) {
+          conclusion = premiseOne.getConclusion(structure);
+  				return Premise.new({
+  					scopeLayer : scope.layer,
+  					scopeId : scope.id,
+  					value: premiseOne.expand(conclusion)
+  				});
+  			}
     		return null;
     	}
     });

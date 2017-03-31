@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('logicToolsApp')
-    .service('fitchNegation', function (Premise, formula) {
+    .service('fitchNegation', function (Premise) {
+      this.introduction = function(premiseOne, premiseTwo, scope) {
+        var newValue;
 
-    	this.introduction = function(premiseOne, premiseTwo, scope) {
-            var newValue;
-            
     		if (!_validImplications(premiseOne, premiseTwo)) {
     			return null;
     		}
@@ -18,14 +17,14 @@ angular.module('logicToolsApp')
     		if (!_validConclusions(premiseOne, premiseTwo)) {
     			return null;
     		}
-            
-            newValue = _getAssumption(premiseOne);
-            
-            return Premise.new({
-				scopeLayer: scope.layer,
-				scopeId: scope.id,
-            	value: '~' + newValue
-            });
+
+        newValue = _getAssumption(premiseOne);
+
+        return Premise.new({
+          scopeLayer: scope.layer,
+          scopeId: scope.id,
+        	value: '~' + newValue
+        });
     	};
 
     	this.elimination = function(premise, scope) {
@@ -53,37 +52,36 @@ angular.module('logicToolsApp')
     	}
 
     	function _validNegation(premiseOne, premiseTwo) {
-    		return _isNegated(_getRawConclusion(premiseOne)) && !_isNegated(_getRawConclusion(premiseTwo));
+        var conclusionOne, conclusionTwo;
+        conclusionOne = _getRawConclusion(premiseOne);
+        conclusionTwo = _getRawConclusion(premiseTwo);
+    		return premiseOne.hasNegation(conclusionOne) && !premiseOne.hasNegation(conclusionTwo);
     	}
 
-    	function _isNegated(premise) {
-            return premise.match(/^\~+/g);
-        }
+      function _removeNegation(premise) {
+        return premise.replace(/[~()]+/g,'');
+      }
 
-        function _removeNegation(premise) {
-        	return premise.replace(/[~()]+/g,'');
-        }
+      function _getAssumption(premise) {
+        var structure, assumption;
+        structure = premise.digest();
+        assumption = premise.getAssumption(structure);
+        return premise.expand(assumption);
+      }
 
-        function _getAssumption(premise) {
-            var structure, assumption;
-            structure = premise.digest();
-            assumption = premise.getAssumption(structure);
-            return premise.expand(assumption);
-        }
+      function _getConclusion(premise) {
+        var structure, conclusion, expanded;
+        structure = premise.digest();
+        conclusion = premise.getConclusion(structure);
+        expanded = premise.expand(_removeNegation(conclusion));
+        return (premise.hasNegation(conclusion)) ? '~(' + expanded + ')': expanded;
+      }
 
-        function _getConclusion(premise) {
-            var structure, conclusion, expanded;
-            structure = premise.digest();
-            conclusion = premise.getConclusion(structure);
-            expanded = premise.expand(_removeNegation(conclusion));
-            return (_isNegated(conclusion)) ? '~(' + expanded + ')': expanded;
-        }
-
-        function _getRawConclusion(premise, structure) {
-            var structure, conclusion;
-            structure = premise.digest();
-            conclusion = premise.getConclusion(structure);
-            return conclusion;
-        }
+      function _getRawConclusion(premise, structure) {
+        var structure, conclusion;
+        structure = premise.digest();
+        conclusion = premise.getConclusion(structure);
+        return conclusion;
+      }
 
 });
