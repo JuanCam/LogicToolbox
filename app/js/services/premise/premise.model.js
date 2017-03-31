@@ -49,14 +49,15 @@ angular.module('logicToolsApp')
             return /[<][=][>]/g.exec(base);
         };
         Premise.prototype.expand = function(premiseLabel) {
-        	var premise, indexPremise, hasNegation;
-        	indexPremise = premiseLabel.replace(/^\~+/, '');
-        	hasNegation = premiseLabel.match(/^\~+/);
-        	premise =  this.labels[indexPremise];
-        	if (hasNegation) {
-        		return (premise) ? '~' + premise : premiseLabel;
-        	}
-        	return (premise) ? _unwrap(premise) : premiseLabel;
+        	var premise, indexPremise, labels, symbol, expanded;
+            indexPremise = premiseLabel.replace(/^\~+/, '');
+            labels = this.labels;
+            premise = _unwrap(labels[indexPremise]) || premiseLabel;
+            symbol = (this.hasNegation(premiseLabel)) ? '~' : '';
+            expanded = _expandPremise(labels, premise);
+            return (this.isCompound(expanded) && expanded !== this.value) 
+                    ? symbol + '(' + expanded + ')'
+                    : symbol + expanded;
         	
         };
         Premise.prototype.getAssumption = function(structrue) {
@@ -74,6 +75,14 @@ angular.module('logicToolsApp')
         Premise.prototype.getPrimitives = function(structrue) {
         	var base = structrue || this.value;
         	return base.match(/\w+/g);
+        }
+        Premise.prototype.hasNegation = function(structrue) {
+            var base = structrue || this.value;
+            return !!base.match(/^\~+/);
+        }
+        Premise.prototype.isCompound = function(structrue) {
+            var base = structrue || this.value;
+            return !!base.match(/[<=>|&]+/);
         }
 
         function _breakPremise(value) {
@@ -99,7 +108,20 @@ angular.module('logicToolsApp')
             return premise.replace(matchExpr, label);
         }
 
+        function _expandPremise(labels, value) {
+            var premiseValue, labelsKeys, symbol;
+            premiseValue = value.slice();
+            labelsKeys = _.keys(labels);
+            return _.map(labelsKeys, function(label) {
+                            premiseValue = premiseValue.replace(label, labels[label]);
+                            return premiseValue;
+                        }).slice(-1)[0];
+        }
+
         function _unwrap(value) {
+            if (!value) {
+                return undefined;
+            }
         	var unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
         	return (unwraped) ? unwraped[1] : value;
         }

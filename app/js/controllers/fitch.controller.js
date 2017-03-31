@@ -9,7 +9,7 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
-        this.premise = '';
+        this.premise = '(p=>~(p=>q))=>p';
 
         this.assume = function() {
             var currentScope, labels;

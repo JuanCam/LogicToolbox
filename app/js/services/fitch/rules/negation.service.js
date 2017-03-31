@@ -18,9 +18,8 @@ angular.module('logicToolsApp')
     		if (!_validConclusions(premiseOne, premiseTwo)) {
     			return null;
     		}
-            debugger
+            
             newValue = _getAssumption(premiseOne);
-            newValue = (premiseOne.getPrimitives(newValue).length > 1) ? '(' + newValue + ')' : newValue;
             
             return Premise.new({
 				scopeLayer: scope.layer,
