@@ -9,7 +9,7 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
-        this.premise = '(p=>~(p=>q))=>p';
+        this.premise = '';
 
         this.assume = function() {
             var currentScope, labels;
@@ -36,6 +36,20 @@ angular
                 return;
             }
             newPremise = fitchNegation.introduction(selected[0], selected[1], currentScope);
+            if(!newPremise) {
+                return;
+            }
+            _entail.call(this, newPremise);
+        };
+        this.negationElim = function() {
+            var selected, newPremise, secondPremise, currentScope;
+            currentScope = this.structure.getCurrentScope();
+            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
+            _uncheckPremises(this.premises, this.selected);
+            if(selected.length > 1) {
+                return;
+            }
+            newPremise = fitchNegation.elimination(selected[0], currentScope);
             if(!newPremise) {
                 return;
             }

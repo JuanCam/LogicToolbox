@@ -4,19 +4,29 @@ angular.module('logicToolsApp')
     .service('fitchImplication', function (Premise, formula) {
 
     	this.introduction = function(scope, lastScope) {
-            var headPremise, lastPremise, headValue, lastValue;
-            headPremise = lastScope.head;
-            lastPremise = lastScope.last;
-            headValue = (headPremise.isCompound(headPremise.value))
-                            ? '(' + headPremise.value + ')'
-                            : headPremise.value;
-            lastValue = (lastPremise.isCompound(lastPremise.value))
-                            ? '(' + lastPremise.value + ')'
-                            : lastPremise.value;
+            var head, last, assumption, conclusion;
+            head = lastScope.head;
+            last = lastScope.last;
+
+            assumption = (head.isCompound(head.value))
+                            ? '(' + head.value + ')'
+                            : head.value;
+
+            conclusion = (last.isCompound(last.value))
+                            ? '(' + last.value + ')'
+                            : last.value;
+            
+            if (head.hasNegation(head.digest())) {
+                assumption = head.value;
+            }
+            if (last.hasNegation(last.digest())) {
+                conclusion = last.value;
+            }
+
 			return Premise.new({
 				scopeLayer: scope.layer,
 				scopeId: scope.id,
-				value: headValue + '=>' + lastValue
+				value: assumption + '=>' + conclusion
 			});
     	};
 

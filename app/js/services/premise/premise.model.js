@@ -32,9 +32,9 @@ angular.module('logicToolsApp')
     		}
     	}
 
-    	Premise.prototype.isImplication = function(structrue) {
-    		var base = structrue || this.value;
-            return /[=][>]/g.exec(base);
+      Premise.prototype.isImplication = function(structrue) {
+    	  var base = structrue || this.value;
+          return /[=][>]/g.exec(base);
       };
       Premise.prototype.isAnd = function (structrue) {
       	var base = structrue || this.value;
@@ -73,6 +73,10 @@ angular.module('logicToolsApp')
       Premise.prototype.getPrimitives = function(structrue) {
       	var base = structrue || this.value;
       	return base.match(/\w+/g);
+      }
+      Premise.prototype.removeNegation = function(structrue) {
+        var base = structrue || this.value;
+        return base.replace(NEGATION_REGEX, '');
       }
       Premise.prototype.hasNegation = function(structrue) {
           var base = structrue || this.value;
