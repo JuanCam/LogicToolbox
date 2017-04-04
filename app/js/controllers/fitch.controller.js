@@ -148,8 +148,12 @@ angular
             if (disjunctions.length !== 1) {
               return null;
             }
-            implications = _.differenceBy(disjunctions, premises, _.isEqual);
-            if (implications.length !== premises.length) {
+            
+            implications = _.filter(premises, function (premise) {
+                return premise.isImplication(premise.digest());
+            });
+
+            if (implications.length !== premises.length - 1) {
               return null;
             }
             return {
