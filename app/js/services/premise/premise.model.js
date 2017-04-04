@@ -1,6 +1,8 @@
 angular.module('logicToolsApp')
     .factory('Premise', function() {
-      var NEGATION_REGEX = /^\~+/;
+
+        var NEGATION_REGEX = /^\~+/;
+
     	function Premise(props) {
     		var labelIndex, labelConst;
     		labelIndex = 0;
@@ -17,14 +19,13 @@ angular.module('logicToolsApp')
     			while(premises) {
     				premises = _breakPremise(value);
     				_.each(_extractPremises(value), function(premise) {
-    					label =  labelIndex + 1;
+    					label =  ++labelIndex;
     					copyPremise = premise.slice();
     					labels[label] = _createLabels(labels, label, copyPremise);
     					value = _reducePremise(value, _unwrap(premise), label);
     					if (callback) {
     						callback(premise, value, label);
     					}
-    					labelIndex++;
     				});
     			}
     			this.labels = _.assign({}, labels);
@@ -124,17 +125,17 @@ angular.module('logicToolsApp')
       }
 
       function _unwrap(value) {
-        var unwraped;
-        if (!value) {
-          return undefined;
-        }
-      	unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
-      	return (unwraped) ? unwraped[1] : value;
+            var unwraped;
+            if (!value) {
+                return undefined; 
+            }
+            unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
+            return (unwraped) ? unwraped[1] : value;
       }
 
-    	return {
-    		new: function(props) {
-    			return new Premise(props);
-    		}
+      return {
+        new: function(props) {
+    		return new Premise(props);
     	}
+      }
     });
