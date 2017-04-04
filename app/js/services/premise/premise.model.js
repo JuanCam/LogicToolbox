@@ -1,7 +1,7 @@
 angular.module('logicToolsApp')
     .factory('Premise', function() {
 
-        var NEGATION_REGEX = /^\~+/;
+      var NEGATION_REGEX = /^\~+/;
 
     	function Premise(props) {
     		var labelIndex, labelConst;
@@ -127,7 +127,7 @@ angular.module('logicToolsApp')
       function _unwrap(value) {
             var unwraped;
             if (!value) {
-                return undefined; 
+                return undefined;
             }
             unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
             return (unwraped) ? unwraped[1] : value;

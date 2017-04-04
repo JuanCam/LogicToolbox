@@ -9,16 +9,17 @@ angular
       fitchImplication,
       fitchDisjunction
     ) {
-        var newPremise, headPremise;
 
         this.marginLeft = 16;
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
         this.premise = '';
+        this.showDisjoinField = false;
+        this.premiseToDisjoin = '';
 
         this.assume = function() {
-            var currentScope, labels;
+            var currentScope, labels, headPremise;
 
             headPremise = Premise.new({
                 value: this.premise
@@ -30,6 +31,22 @@ angular
             headPremise.scopeId = currentScope.id;
             headPremise.scopeLayer = currentScope.layer;
             this.premise = '';
+        };
+        this.disjoinPremise = function () {
+          var newPremise, currentScope, selected;
+          currentScope = this.structure.getCurrentScope();
+          selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
+          _uncheckPremises(this.premises, this.selected);
+          if(!selected.length || !this.premiseToDisjoin) {
+              return;
+          }
+          newPremise = fitchDisjunction.introduction(this.premiseToDisjoin, selected, currentScope);
+          this.showDisjoinField = false;
+          this.premiseToDisjoin = '';
+          if(!newPremise) {
+              return;
+          }
+          _entail.call(this, newPremise);
         };
 
         /*Operations*/
@@ -79,6 +96,9 @@ angular
                 return;
             }
             newPremise = fitchImplication.elimination(selected[0], selected[1], currentScope);
+            if(!newPremise) {
+                return;
+            }
             _entail.call(this, newPremise);
         };
 
@@ -90,13 +110,19 @@ angular
             if(selected.length < 3) {
                 return;
             }
-            groupedPremises = _groupOrIntroPremises(selected);
+            groupedPremises = _groupOrEliminPremises(selected);
             if(!groupedPremises) {
                 return;
             }
             newPremise = fitchDisjunction.elimination(groupedPremises, currentScope);
+            if(!newPremise) {
+                return;
+            }
             _entail.call(this, newPremise);
-        }
+        };
+        this.orIntroduction = function () {
+          this.showDisjoinField = true;
+        };
 
         this.reiterate = function() {
             var reiterated, currentScope;
@@ -112,7 +138,7 @@ angular
             _uncheckPremises(this.premises, this.selected);
             this.structure.entail(reiterated[0]);
             this.premises = this.premises.concat(reiterated);
-        }
+        };
 
         /*Local functions*/
         function _entail(premise) {
@@ -140,7 +166,7 @@ angular
             });
         }
 
-        function _groupOrIntroPremises(premises) {
+        function _groupOrEliminPremises(premises) {
             var disjunctions, implications;
             disjunctions = _.filter(premises, function (premise) {
                 return premise.isOr(premise.digest());
@@ -148,7 +174,7 @@ angular
             if (disjunctions.length !== 1) {
               return null;
             }
-            
+
             implications = _.filter(premises, function (premise) {
                 return premise.isImplication(premise.digest());
             });
