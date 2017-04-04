@@ -6,7 +6,7 @@ angular.module('logicToolsApp')
           var uniqueConclusions, assumptions, disjunction;
           assumptions = _getAssumptions(premises.implications);
           uniqueConclusions = _getUniqueConclusions(premises.implications);
-          
+
           if(uniqueConclusions.length !== 1) {
             return null;
           }
@@ -21,6 +21,19 @@ angular.module('logicToolsApp')
             value: uniqueConclusions[0]
           });
 
+      }
+
+      this.introduction = function (value, selected, scope) {
+          var selectedValues, finalValue;
+          selectedValues = _.map(selected, function (premise) {
+              return premise.value;
+          });
+          finalValue = [value].concat(selectedValues);
+          return Premise.new({
+            scopeLayer: scope.layer,
+            scopeId: scope.id,
+            value: finalValue.join('|')
+          });
       }
 
       function _getUniqueConclusions(implications) {

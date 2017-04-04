@@ -32,9 +32,12 @@ angular.module('logicToolsApp')
 
     	this.elimination = function(premiseOne, premiseTwo, scope) {
     		var newPremise = eliminate(premiseTwo, premiseOne, scope) || eliminate(premiseOne, premiseTwo, scope);
+        if (!newPremise) {
+          return null;
+        }
     		newPremise.scopeLayer = scope.layer;
     		newPremise.scopeId = scope.id;
-            return newPremise;
+        return newPremise;
     	};
 
     	function eliminate(premiseOne, premiseTwo, scope) {

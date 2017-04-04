@@ -22,20 +22,33 @@ body {
 }
 .fitch-premise {
     display: flex;
-    font-size: 16px;
+    font-size: 17px;
+}
+.fitch-premise-value {
+  border-left: 1px solid gray;
+  padding-left: 5px;
 }
 .fitch-structure {
     margin: 20px 0;
 }
 .fitch-operations {
+    display: flex;
+    justify-content: space-between;
     margin-top: 15px;
 }
 .fitch-group-operations {
-    margin-left: 0;
-    margin-right: 0;
+    margin: 15px 0;
+}
+.fitch-premise-line {
+    font-size: 12px;
+    line-height: 18px;
+    margin-right: 3px;
 }
 .truth-table {
     margin-top: 15px;
+}
+.main-title {
+    margin: 15px;
 }
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {

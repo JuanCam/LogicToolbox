@@ -1,38 +1,61 @@
-<div class="well">
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Premise" ng-model="fitch.premise" />
-                <span class="input-group-btn">
-                    <button class="btn btn-default" ng-click="fitch.assume()">Add</button>
-                </span>
-            </div>
-        </div>
+<div class="panel panel-primary">
+    <div class="panel-heading">
+      Fitch
     </div>
-    <div class="row col-sm-offset-2 fitch-operations">
-        <div class="list-group fitch-group-operations col-sm-12 col-md-3">
-            <button class="list-group-item" ng-click="fitch.reiterate()">Reiterate</button>
-            <button class="list-group-item" ng-click="fitch.implicationIntro()">Implication Intro</button>
-            <button class="list-group-item" ng-click="fitch.implicationElim()">Implication Elim</button>
-            <button class="list-group-item">Delete</button>
-        </div>
-        <div class="list-group fitch-group-operations col-sm-12 col-md-3">
-            <button class="list-group-item">And Introduction</button>
-            <button class="list-group-item">And Elimination</button>
-            <button class="list-group-item">Or Introduction</button>
-            <button class="list-group-item" ng-click="fitch.orElimination()">Or Elimination</button>
-        </div>
-        <div class="list-group fitch-group-operations col-sm-12 col-md-3">
-            <button class="list-group-item" ng-click="fitch.negationIntro()">Negation Intro</button>
-            <button class="list-group-item" ng-click="fitch.negationElim()">Negation Elim</button>
-            <button class="list-group-item">Biconditional Intro</button>
-            <button class="list-group-item">Biconditional Elim</button>
-        </div>
+    <div class="panel-body">
+      <div class="row">
+          <div class="col-sm-6 col-sm-offset-3">
+              <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Premise" ng-model="fitch.premise" />
+                  <span class="input-group-btn">
+                      <button class="btn btn-info" ng-click="fitch.assume()">
+                        Add
+                        <span class="glyphicon glyphicon-plus"></span>
+                      </button>
+                  </span>
+              </div>
+          </div>
+      </div>
+      <div class="row fitch-operations">
+          <div class="list-group fitch-group-operations">
+              <button class="list-group-item list-group-item-warning" ng-click="fitch.reiterate()">
+                Reiterate
+                <span class="glyphicon glyphicon-repeat"></span>
+              </button>
+              <button class="list-group-item list-group-item-danger">
+                Delete
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+              <button class="list-group-item" ng-click="fitch.negationIntro()">Negation Introduction</button>
+              <button class="list-group-item" ng-click="fitch.negationElim()">Negation Elimination</button>
+          </div>
+          <div class="list-group fitch-group-operations">
+              <button class="list-group-item">And Introduction</button>
+              <button class="list-group-item">And Elimination</button>
+              <button class="list-group-item" ng-click="fitch.orIntroduction()">Or Introduction</button>
+              <button class="list-group-item" ng-click="fitch.orElimination()">Or Elimination</button>
+          </div>
+          <div class="list-group fitch-group-operations">
+              <button class="list-group-item" ng-click="fitch.implicationIntro()">Implication Introduction</button>
+              <button class="list-group-item" ng-click="fitch.implicationElim()">Implication Elimination</button>
+              <button class="list-group-item">Biconditional Intro</button>
+              <button class="list-group-item">Biconditional Elim</button>
+          </div>
+      </div>
     </div>
+</div>
+<div class="row col-sm-6 col-sm-offset-3 fitch-operations" ng-if="fitch.showDisjoinField">
+  <div class="input-group">
+    <input type="text" class="form-control" placeholder="Insert premise to disjoin" ng-model="fitch.premiseToDisjoin"/>
+    <span class="input-group-btn">
+        <button class="btn btn-danger" ng-click="fitch.disjoinPremise()">Insert</button>
+    </span>
+  </div>
 </div>
 <div class="fitch-structure col-sm-10 col-sm-offset-1">
     <div class="fitch-premise" ng-repeat="premise in fitch.premises track by $index">
+        <span class="fitch-premise-line text-muted">{{$index + 1}}) </span>
         <input type="checkbox" ng-model="premise.checked">
-        <div ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
+        <div class="fitch-premise-value" ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
     </div>
 </div>
