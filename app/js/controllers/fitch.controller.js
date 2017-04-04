@@ -2,7 +2,13 @@
 
 angular
   .module('logicToolsApp')
-  .controller('FitchCtrl', function (FitchStack, Premise, fitchNegation, fitchImplication) {
+  .controller('FitchCtrl', function (
+      FitchStack,
+      Premise,
+      fitchNegation,
+      fitchImplication,
+      fitchDisjunction
+    ) {
         var newPremise, headPremise;
 
         this.marginLeft = 16;
@@ -76,6 +82,22 @@ angular
             _entail.call(this, newPremise);
         };
 
+        this.orElimination = function () {
+            var selected, currentScope, newPremise, groupedPremises;
+            currentScope = this.structure.getCurrentScope();
+            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
+            _uncheckPremises(this.premises, this.selected);
+            if(selected.length < 3) {
+                return;
+            }
+            groupedPremises = _groupOrIntroPremises(selected);
+            if(!groupedPremises) {
+                return;
+            }
+            newPremise = fitchDisjunction.elimination(groupedPremises, currentScope);
+            _entail.call(this, newPremise);
+        }
+
         this.reiterate = function() {
             var reiterated, currentScope;
             currentScope = this.structure.getCurrentScope();
@@ -116,6 +138,29 @@ angular
                 premise.checked = false;
                 return premise;
             });
+        }
+
+        function _groupOrIntroPremises(premises) {
+            var disjunctions, implications;
+            disjunctions = _.filter(premises, function (premise) {
+                return premise.isOr(premise.digest());
+            });
+            if (disjunctions.length !== 1) {
+              return null;
+            }
+            
+            implications = _.filter(premises, function (premise) {
+                return premise.isImplication(premise.digest());
+            });
+
+            if (implications.length !== premises.length - 1) {
+              return null;
+            }
+            return {
+               disjunctions: disjunctions,
+               implications: implications
+            };
+
         }
 
     });

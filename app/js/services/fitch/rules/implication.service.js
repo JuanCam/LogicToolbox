@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('logicToolsApp')
-    .service('fitchImplication', function (Premise, formula) {
+    .service('fitchImplication', function (Premise) {
 
     	this.introduction = function(scope, lastScope) {
             var head, last, assumption, conclusion;
@@ -15,7 +15,7 @@ angular.module('logicToolsApp')
             conclusion = (last.isCompound(last.value))
                             ? '(' + last.value + ')'
                             : last.value;
-            
+
             if (head.hasNegation(head.digest())) {
                 assumption = head.value;
             }
