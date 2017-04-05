@@ -2,10 +2,12 @@ angular.module('logicToolsApp')
     .factory('Premise', function() {
 
       var NEGATION_REGEX = /^\~+/;
+      var id = 0;
 
     	function Premise(props) {
     		var labelIndex, labelConst;
     		labelIndex = 0;
+        this.id = ++id;
     		this.labels = {};
     		this.scopeLayer = props.scopeLayer;
     		this.scopeId = props.scopeId;
@@ -134,8 +136,8 @@ angular.module('logicToolsApp')
       }
 
       return {
-        new: function(props) {
-    		return new Premise(props);
-    	}
+          new: function(props) {
+      		return new Premise(props);
+      	}
       }
     });
