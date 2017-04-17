@@ -1,5 +1,6 @@
-angular.module('logicToolsApp')
-    .factory('Scope', function() {
+angular
+  .module('logicToolsApp')
+  .factory('Scope', function() {
       var id = 0;
       function Scope(props) {
           this.id = ++id;

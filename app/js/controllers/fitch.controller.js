@@ -5,6 +5,7 @@ angular
   .controller('FitchCtrl', function (
       FitchStack,
       Premise,
+      PremiseTree,
       fitchNegation,
       fitchImplication,
       fitchDisjunction
@@ -14,6 +15,7 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
+        this.premiseStructure = PremiseTree.new();
         this.premise = '';
         this.showDisjoinField = false;
         this.premiseToDisjoin = '';
@@ -28,6 +30,7 @@ angular
             this.structure.openScope(headPremise);
             currentScope = this.structure.getCurrentScope();
             this.premises.push(headPremise);
+            this.premiseStructure.append(headPremise);
             headPremise.scopeId = currentScope.id;
             headPremise.scopeLayer = currentScope.layer;
             this.premise = '';
@@ -79,11 +82,14 @@ angular
             _entail.call(this, newPremise);
         };
         this.implicationIntro = function() {
-            var lastScope, currentScope, newPremise;
+            var lastScope, currentScope, newPremise, head, last;
             lastScope = this.structure.closeScope();
+            head = lastScope.head;
+            last = lastScope.last;
             currentScope = this.structure.getCurrentScope();
             newPremise = fitchImplication.introduction(currentScope, lastScope);
             _entail.call(this, newPremise);
+            _appendPremiseChild(this.premiseStructure, [head, last], newPremise);
             _uncheckPremises(this.premises, this.selected);
         };
 
@@ -137,8 +143,14 @@ angular
                             });
             _uncheckPremises(this.premises, this.selected);
             this.structure.entail(reiterated[0]);
+            this.premiseStructure.append(reiterated[0]);
             this.premises = this.premises.concat(reiterated);
         };
+
+        this.delete = function () {
+          var selected;
+          selected = _getSelectedPremises(this.premises);
+        }
 
         /*Local functions*/
         function _entail(premise) {
@@ -187,6 +199,12 @@ angular
                implications: implications
             };
 
+        }
+
+        function _appendPremiseChild(tree, parentPremises, childPremise) {
+          _.forEach(parentPremises, function (premise) {
+            tree.appendChild(premise, childPremise);
+          })
         }
 
     });
