@@ -19,12 +19,11 @@ angular
       parentIndex = premises.indexOf(parentPremise);
       childIndex = premises.indexOf(childPremise);
 
+      tree[parentIndex].push(childPremise);
+
       if (childIndex === -1) {
-        tree[parentIndex].push(premises.length);
         premises.push(childPremise);
         tree.push([]);
-      } else {
-        tree[parentIndex].push(childIndex);
       }
     }
 
