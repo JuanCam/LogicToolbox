@@ -12,7 +12,6 @@ angular
     ) {
 
         this.marginLeft = 16;
-        this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
         this.premiseGraph = PremiseTree.new();
@@ -29,7 +28,6 @@ angular
 
             this.structure.openScope(headPremise);
             currentScope = this.structure.getCurrentScope();
-            this.premises.push(headPremise);
             this.premiseGraph.append(headPremise);
             headPremise.scopeId = currentScope.id;
             headPremise.scopeLayer = currentScope.layer;
@@ -159,7 +157,6 @@ angular
         /*Local functions*/
         function _entail(premise, parentPremises) {
             this.structure.entail(premise);
-            this.premises.push(premise);
             _appendPremiseChild(this.premiseGraph, premise, parentPremises);
         }
 
