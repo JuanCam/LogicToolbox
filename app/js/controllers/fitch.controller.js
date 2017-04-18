@@ -15,10 +15,10 @@ angular
         this.premises = [];
         this.selected = [];
         this.structure = FitchStack.new();
-        this.premiseStructure = PremiseTree.new();
+        this.premiseGraph = PremiseTree.new();
         this.premise = '';
         this.showDisjoinField = false;
-        this.premiseToDisjoin = '';
+        this.valueToDisjoin = '';
 
         this.assume = function() {
             var currentScope, labels, headPremise;
@@ -30,34 +30,34 @@ angular
             this.structure.openScope(headPremise);
             currentScope = this.structure.getCurrentScope();
             this.premises.push(headPremise);
-            this.premiseStructure.append(headPremise);
+            this.premiseGraph.append(headPremise);
             headPremise.scopeId = currentScope.id;
             headPremise.scopeLayer = currentScope.layer;
             this.premise = '';
         };
         this.disjoinPremise = function () {
-          var newPremise, currentScope, selected;
+          var newPremise, currentScope, selected, disjointPremise;
           currentScope = this.structure.getCurrentScope();
-          selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
-          _uncheckPremises(this.premises, this.selected);
-          if(!selected.length || !this.premiseToDisjoin) {
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+          _uncheckPremises(this.premiseGraph.premises, this.selected);
+          if(!selected.length || !this.valueToDisjoin) {
               return;
           }
-          newPremise = fitchDisjunction.introduction(this.premiseToDisjoin, selected, currentScope);
+          newPremise = fitchDisjunction.introduction(this.valueToDisjoin, selected, currentScope);
           this.showDisjoinField = false;
-          this.premiseToDisjoin = '';
+          this.valueToDisjoin = '';
           if(!newPremise) {
               return;
           }
-          _entail.call(this, newPremise);
+          _entail.call(this, newPremise, selected);
         };
 
         /*Operations*/
         this.negationIntro = function() {
             var selected, newPremise, secondPremise, currentScope;
             currentScope = this.structure.getCurrentScope();
-            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
-            _uncheckPremises(this.premises, this.selected);
+            selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
             if(selected.length !== 2) {
                 return;
             }
@@ -65,13 +65,13 @@ angular
             if(!newPremise) {
                 return;
             }
-            _entail.call(this, newPremise);
+            _entail.call(this, newPremise, selected);
         };
         this.negationElim = function() {
             var selected, newPremise, secondPremise, currentScope;
             currentScope = this.structure.getCurrentScope();
-            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
-            _uncheckPremises(this.premises, this.selected);
+            selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
             if(selected.length > 1) {
                 return;
             }
@@ -79,7 +79,7 @@ angular
             if(!newPremise) {
                 return;
             }
-            _entail.call(this, newPremise);
+            _entail.call(this, newPremise, selected);
         };
         this.implicationIntro = function() {
             var lastScope, currentScope, newPremise, head, last;
@@ -88,16 +88,15 @@ angular
             last = lastScope.last;
             currentScope = this.structure.getCurrentScope();
             newPremise = fitchImplication.introduction(currentScope, lastScope);
-            _entail.call(this, newPremise);
-            _appendPremiseChild(this.premiseStructure, [head, last], newPremise);
-            _uncheckPremises(this.premises, this.selected);
+            _entail.call(this, newPremise, [head, last]);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
         };
 
         this.implicationElim = function() {
             var selected, newPremise, secondPremise, currentScope;
             currentScope = this.structure.getCurrentScope();
-            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
-            _uncheckPremises(this.premises, this.selected);
+            selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
             if(selected.length !== 2) {
                 return;
             }
@@ -105,18 +104,18 @@ angular
             if(!newPremise) {
                 return;
             }
-            _entail.call(this, newPremise);
+            _entail.call(this, newPremise, selected);
         };
 
         this.orElimination = function () {
             var selected, currentScope, newPremise, groupedPremises;
             currentScope = this.structure.getCurrentScope();
-            selected = _getValidSelecedPremises(this.premises, this.structure.scopes);
-            _uncheckPremises(this.premises, this.selected);
+            selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
             if(selected.length < 3) {
                 return;
             }
-            groupedPremises = _groupOrEliminPremises(selected);
+            groupedPremises = _groupOrPremises(selected);
             if(!groupedPremises) {
                 return;
             }
@@ -124,7 +123,7 @@ angular
             if(!newPremise) {
                 return;
             }
-            _entail.call(this, newPremise);
+            _entail.call(this, newPremise, groupedPremises);
         };
         this.orIntroduction = function () {
           this.showDisjoinField = true;
@@ -133,7 +132,7 @@ angular
         this.reiterate = function() {
             var reiterated, currentScope;
             currentScope = this.structure.getCurrentScope();
-            reiterated = _getValidSelecedPremises(this.premises, this.structure.scopes)
+            reiterated = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes)
                             .map(function(premise, key) {
                                 return Premise.new({
                                     scopeLayer: currentScope.layer,
@@ -141,22 +140,27 @@ angular
                                     value: premise.value
                                 });
                             });
-            _uncheckPremises(this.premises, this.selected);
+            _uncheckPremises(this.premiseGraph.premises, this.selected);
             this.structure.entail(reiterated[0]);
-            this.premiseStructure.append(reiterated[0]);
-            this.premises = this.premises.concat(reiterated);
+            _.forEach(reiterated, function (premise) {
+              this.premiseGraph.append(premise);
+            }.bind(this));
         };
 
         this.delete = function () {
           var selected;
-          selected = _getSelectedPremises(this.premises);
-          this.premiseStructure.remove(selected[0]);
+          selected = _getSelectedPremises(this.premiseGraph.premises);
+          _.forEach(selected, function (premise) {
+            this.premiseGraph.removeNode(premise);
+          }.bind(this));
+          //TODO: Rebuild the fitch stack structure according to the remaining premises.
         }
 
         /*Local functions*/
-        function _entail(premise) {
+        function _entail(premise, parentPremises) {
             this.structure.entail(premise);
             this.premises.push(premise);
+            _appendPremiseChild(this.premiseGraph, premise, parentPremises);
         }
 
         function _getSelectedPremises(premises) {
@@ -179,7 +183,7 @@ angular
             });
         }
 
-        function _groupOrEliminPremises(premises) {
+        function _groupOrPremises(premises) {
             var disjunctions, implications;
             disjunctions = _.filter(premises, function (premise) {
                 return premise.isOr(premise.digest());
@@ -202,7 +206,7 @@ angular
 
         }
 
-        function _appendPremiseChild(tree, parentPremises, childPremise) {
+        function _appendPremiseChild(tree, childPremise, parentPremises) {
           _.forEach(parentPremises, function (premise) {
             tree.appendChild(premise, childPremise);
           })

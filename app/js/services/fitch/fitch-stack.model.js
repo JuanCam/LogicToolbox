@@ -6,6 +6,7 @@ angular
 
     function FitchStack(props) {
       this.scopes = [];
+      this.scopeHistory = [];
     }
 
     FitchStack.prototype.closeScope = function() {
@@ -24,13 +25,14 @@ angular
       });
 
       if (this.scopes.length) {
-          this.scopes = _.map(this.scopes, function(scope) {
-              scope.blur();
-              return scope;
-          });
+        this.scopes = _.map(this.scopes, function(scope) {
+          scope.blur();
+          return scope;
+        });
       }
 
       this.scopes.push(scope);
+      this.scopeHistory.push(scope);
     };
 
     FitchStack.prototype.entail = function(assumption) {
