@@ -150,6 +150,7 @@ angular
         this.delete = function () {
           var selected;
           selected = _getSelectedPremises(this.premises);
+          this.premiseStructure.remove(selected[0]);
         }
 
         /*Local functions*/
