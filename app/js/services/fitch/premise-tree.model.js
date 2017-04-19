@@ -29,27 +29,51 @@ angular
       var childrenIds, grandChildrenIds;
       childrenIds = _getChildrenIds(this.tree, this.premises, premiseToRemove);
       while (childrenIds.length) {
+        debugger
         grandChildrenIds = _getGrandchildren(this.tree, this.premises, childrenIds);
         this.tree = _cutTree(this.tree, this.premises, childrenIds);
         this.premises = _cutPremises(this.premises, childrenIds);
         childrenIds = grandChildrenIds;
       }
+      this.tree = _removeTreeNode(this.tree, this.premises, premiseToRemove);
       this.premises = _removePremise(this.premises, premiseToRemove);
-      this.tree = _removeTreeNode(this.tree, this.premise, premiseToRemove);
       return this.premises;
     }
 
     function _removePremise(premises, premiseToRemove) {
-      return _.filter(premises, function (premise) {
+      var filteredPremises = _.filter(premises, function (premise) {
         return premise.id !== premiseToRemove.id;
+      });
+      return _mergePremiseScope(filteredPremises);
+    }
+
+    function _removeChildNode(node, childNode) {
+      return _.filter(node, function (child) {
+        return child !== childNode;
+      });
+    }
+
+    function _removeInvalidChildren(node, premises) {
+      return _.filter(node, function (child) {
+        return !!_findPremise(premises, child);
       });
     }
 
     function _removeTreeNode(tree, premises, premiseToRemove) {
       var premiseIndex = _getPremiseNodeIndex(premises, premiseToRemove);
-      return _.filter(tree, function (node, indexNode) {
-        return indexNode !== premiseIndex;
-      });
+      return _.chain(tree)
+              .filter(function (node, indexNode) {
+                return indexNode !== premiseIndex;
+              })
+              .map(function (node) {
+                var newNode = _removeChildNode(node, premiseToRemove.id);
+                return _removeInvalidChildren(newNode, premises);
+              })
+              .value();
+    }
+
+    function _findPremise(premises, id) {
+      return _.find(premises, {id: id});
     }
 
     function _getChildrenIds(tree, premises, premise) {
@@ -71,7 +95,7 @@ angular
     }
 
     function _cutPremises(premises, ids) {
-      return _.filter(premises, function (premise) {
+      return  _.filter(premises, function (premise) {
         return ids.indexOf(premise.id) === -1;
       });
     }
@@ -79,10 +103,30 @@ angular
     function _getGrandchildren(tree, premises, childrenIds) {
       return _.chain(childrenIds)
               .map(function (id) {
-                 return _getChildrenIds(tree, premises, _.find(premises, {id: id}));
+                var premise = _findPremise(premises, id) || {};
+                return _getChildrenIds(tree, premises, premise);
                })
-               .flattenDeep()
-               .value();
+              .flattenDeep()
+              .filter(function (id) {
+                return !!id;
+              })
+              .value();
+    }
+
+    function _mergePremiseScope(premises) {
+      return _.chain(premises)
+              .groupBy('scopeLayer')
+              .map(function (premiseGroup) {
+                if (_.uniqBy(premiseGroup, 'scopeId').length > 1) {
+                  return _.map(premiseGroup, function (premise) {
+                    premise.scopeId = premiseGroup[0].scopeId;
+                    return premise;
+                  });
+                }
+                return premiseGroup;
+              })
+              .flattenDeep()
+              .value();
     }
 
     return {
