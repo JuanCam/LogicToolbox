@@ -20,19 +20,20 @@ angular
         this.valueToDisjoin = '';
 
         this.assume = function() {
-            var currentScope, labels, headPremise;
+          var currentScope, labels, headPremise;
 
-            headPremise = Premise.new({
-                value: this.premise
-            });
+          headPremise = Premise.new({
+            value: this.premise
+          });
 
-            this.structure.openScope(headPremise);
-            currentScope = this.structure.getCurrentScope();
-            this.premiseGraph.append(headPremise);
-            headPremise.scopeId = currentScope.id;
-            headPremise.scopeLayer = currentScope.layer;
-            this.premise = '';
+          this.structure.openScope(headPremise);
+          currentScope = this.structure.getCurrentScope();
+          this.premiseGraph.append(headPremise);
+          headPremise.scopeId = currentScope.id;
+          headPremise.scopeLayer = currentScope.layer;
+          this.premise = '';
         };
+
         this.disjoinPremise = function () {
           var newPremise, currentScope, selected, disjointPremise;
           currentScope = this.structure.getCurrentScope();
@@ -146,11 +147,13 @@ angular
         };
 
         this.delete = function () {
-          var selected;
+          var selected, scopeIds;
           selected = _getSelectedPremises(this.premiseGraph.premises);
           _.forEach(selected, function (premise) {
             this.premiseGraph.removeNode(premise);
           }.bind(this));
+          scopeIds = _.map(this.premiseGraph.premises, 'scopeId');
+          this.structure = _resetFitchStructure(this.structure, scopeIds);
           //TODO: Rebuild the fitch stack structure according to the remaining premises.
         }
 
@@ -181,25 +184,27 @@ angular
         }
 
         function _groupOrPremises(premises) {
-            var disjunctions, implications;
-            disjunctions = _.filter(premises, function (premise) {
-                return premise.isOr(premise.digest());
-            });
-            if (disjunctions.length !== 1) {
-              return null;
-            }
+          var disjunctions, implications;
+          disjunctions = _.filter(premises, function (premise) {
+            return premise.isOr(premise.digest());
+          });
 
-            implications = _.filter(premises, function (premise) {
-                return premise.isImplication(premise.digest());
-            });
+          if (disjunctions.length !== 1) {
+            return null;
+          }
 
-            if (implications.length !== premises.length - 1) {
-              return null;
-            }
-            return {
-               disjunctions: disjunctions,
-               implications: implications
-            };
+          implications = _.filter(premises, function (premise) {
+            return premise.isImplication(premise.digest());
+          });
+
+          if (implications.length !== premises.length - 1) {
+            return null;
+          }
+
+          return {
+            disjunctions: disjunctions,
+            implications: implications
+          };
 
         }
 
@@ -207,6 +212,27 @@ angular
           _.forEach(parentPremises, function (premise) {
             tree.appendChild(premise, childPremise);
           })
+        }
+
+        function _resetFitchStructure(oldStructure, scopeIds) {
+          var newStructure, newCurrentLayer, newCurrentScope;
+          newStructure = FitchStack.new();
+          newStructure.scopes = _.filter(oldStructure.scopeHistory, function(scope) {
+            return scopeIds.indexOf(scope.id) !== -1;
+          });
+          newStructure.scopeHistory = newStructure.scopes;
+          newCurrentLayer = _.chain(newStructure.scopes)
+                             .map('layer')
+                             .uniq()
+                             .max()
+                             .value();
+          newStructure.scopes = _.map(newStructure.scopes, function(scope) {
+            scope.isFocused = newCurrentLayer === scope.layer;
+            return scope;
+          });
+          newStructure.setCurrentLayer(newCurrentLayer);
+          return newStructure;
+
         }
 
     });

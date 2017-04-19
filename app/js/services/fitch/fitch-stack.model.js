@@ -44,6 +44,10 @@ angular
       return _.filter(this.scopes, 'isFocused')[0];
     };
 
+    FitchStack.prototype.setCurrentLayer = function(currentLayer) {
+      scopeLayer = currentLayer;
+    }
+
     return {
       new: function(props) {
         var fitchProps = props || {};
