@@ -58,14 +58,30 @@ angular
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if (selected.length !== this.selected.length) {
-              return;
+          if (selected.length < 2) {
+            return;
           }
           newPremise = fitchConjunction.introduction(selected, currentScope);
           if (!newPremise) {
-              return;
+            return;
           }
           _entail.call(this, newPremise, selected);
+        };
+        this.andElimination = function () {
+          var selected, newPremises, secondPremise, currentScope;
+          currentScope = this.structure.getCurrentScope();
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+          _uncheckPremises(this.premiseGraph.premises, this.selected);
+          if (selected.length !== 1) {
+            return;
+          }
+          newPremises = fitchConjunction.elimination(selected[0], currentScope);
+          if (!newPremises) {
+            return;
+          }
+          _.forEach(newPremises, function (premise) {
+            _entail.call(this, premise, selected);
+          }.bind(this));
         };
         this.negationIntro = function() {
           var selected, newPremise, secondPremise, currentScope;
@@ -73,11 +89,11 @@ angular
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
           if (selected.length !== 2) {
-              return;
+            return;
           }
           newPremise = fitchNegation.introduction(selected[0], selected[1], currentScope);
           if (!newPremise) {
-              return;
+            return;
           }
           _entail.call(this, newPremise, selected);
         };
@@ -87,11 +103,11 @@ angular
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
           if (selected.length > 1) {
-              return;
+            return;
           }
           newPremise = fitchNegation.elimination(selected[0], currentScope);
           if (!newPremise) {
-              return;
+            return;
           }
           _entail.call(this, newPremise, selected);
         };
@@ -112,11 +128,11 @@ angular
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
           if (selected.length !== 2) {
-              return;
+            return;
           }
           newPremise = fitchImplication.elimination(selected[0], selected[1], currentScope);
           if (!newPremise) {
-              return;
+            return;
           }
           _entail.call(this, newPremise, selected);
         };
@@ -127,15 +143,15 @@ angular
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
           if (selected.length < 3) {
-              return;
+            return;
           }
           groupedPremises = _groupOrPremises(selected);
           if (!groupedPremises) {
-              return;
+            return;
           }
           newPremise = fitchDisjunction.elimination(groupedPremises, currentScope);
           if (!newPremise) {
-              return;
+            return;
           }
           _entail.call(this, newPremise, groupedPremises);
         };

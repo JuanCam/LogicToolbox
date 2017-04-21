@@ -13,4 +13,18 @@ angular
         value: premiseValue.join('&')
       })
     }
+    this.elimination = function (premise, scope) {
+      var digestedPremise = premise.digest();
+      return _.chain(digestedPremise)
+              .split(/\&+/)
+              .map(function (simplePremise) {
+                var expanded = premise.expand(simplePremise)
+                return Premise.new({
+                  scopeLayer: scope.layer,
+                  scopeId: scope.id,
+                  value: premise.unwrap(expanded)
+                });
+              })
+              .value();
+    }
   });
