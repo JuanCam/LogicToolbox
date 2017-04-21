@@ -201,6 +201,22 @@ angular
             _entail.call(this, premise, selected);
           }.bind(this));
         }
+        this.biconditionalElim = function () {
+          var selected, newPremises, secondPremise, currentScope;
+          currentScope = this.structure.getCurrentScope();
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+          _uncheckPremises(this.premiseGraph.premises, this.selected);
+          if (selected.length !== 1) {
+            return;
+          }
+          newPremises = fitchBicondition.elimination(selected[0], currentScope);
+          if (!newPremises) {
+            return;
+          }
+          _.forEach(newPremises, function (premise) {
+            _entail.call(this, premise, selected);
+          }.bind(this));
+        }
 
         /*Local functions*/
         function _entail(premise, parentPremises) {

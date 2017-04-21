@@ -112,14 +112,6 @@ angular
               .value();
     }
 
-    function _getSurroundingPremises(premises, premise) {
-      var premiseIndex, upPremise, downPremise;
-      premiseIndex = premises.indexOf(premise);
-      upPremise = premises[premiseIndex];
-      downPremise = premises[premiseIndex + 1];
-      return [upPremise, downPremise];
-    }
-
     function _mergePremiseScopes(premises, premiseToRemove) {
       var prevScopeId, prevScopeLayer, layerIncrement;
       layerIncrement = 0;

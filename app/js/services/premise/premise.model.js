@@ -2,8 +2,9 @@ angular
   .module('logicToolsApp')
   .factory('Premise', function() {
 
-    var NEGATION_REGEX, id;
+    var NEGATION_REGEX, IMPLICATION_REGEX, id;
     NEGATION_REGEX = /^\~+/;
+    IMPLICATION_REGEX = /[=][>]/g;
     id = 0;
 
   	function Premise(props) {
@@ -39,7 +40,7 @@ angular
 
     Premise.prototype.isImplication = function(structrue) {
   	  var base = structrue || this.value;
-      return /[=][>]/g.exec(base);
+      return base.match(IMPLICATION_REGEX);
     };
     Premise.prototype.isAnd = function (structrue) {
     	var base = structrue || this.value;
@@ -66,14 +67,14 @@ angular
     Premise.prototype.getAssumption = function(structrue) {
     	var base, valuesMatched;
     	base = structrue || this.value;
-    	valuesMatched = base.split(/[=][>]/g);
-    	return (valuesMatched) ? valuesMatched[0] : undefined;
+    	valuesMatched = base.split(IMPLICATION_REGEX);
+    	return (valuesMatched) ? this.expand(valuesMatched[0]) : undefined;
     }
     Premise.prototype.getConclusion = function(structrue) {
     	var base, valuesMatched;
     	base = structrue || this.value;
-    	valuesMatched = base.split(/[=][>]/g)
-    	return (valuesMatched) ? valuesMatched[1] : undefined;
+    	valuesMatched = base.split(IMPLICATION_REGEX);
+    	return (valuesMatched) ? this.expand(valuesMatched[1]) : undefined;
     }
     Premise.prototype.getPrimitives = function(structrue) {
     	var base = structrue || this.value;
