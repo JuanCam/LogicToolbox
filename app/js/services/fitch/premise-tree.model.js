@@ -29,7 +29,6 @@ angular
       var childrenIds, grandChildrenIds;
       childrenIds = _getChildrenIds(this.tree, this.premises, premiseToRemove);
       while (childrenIds.length) {
-        debugger
         grandChildrenIds = _getGrandchildren(this.tree, this.premises, childrenIds);
         this.tree = _cutTree(this.tree, this.premises, childrenIds);
         this.premises = _cutPremises(this.premises, childrenIds);
@@ -44,7 +43,7 @@ angular
       var filteredPremises = _.filter(premises, function (premise) {
         return premise.id !== premiseToRemove.id;
       });
-      return _mergePremiseScope(filteredPremises);
+      return _mergePremiseScopes(filteredPremises, premiseToRemove);
     }
 
     function _removeChildNode(node, childNode) {
@@ -113,20 +112,26 @@ angular
               .value();
     }
 
-    function _mergePremiseScope(premises) {
-      return _.chain(premises)
-              .groupBy('scopeLayer')
-              .map(function (premiseGroup) {
-                if (_.uniqBy(premiseGroup, 'scopeId').length > 1) {
-                  return _.map(premiseGroup, function (premise) {
-                    premise.scopeId = premiseGroup[0].scopeId;
-                    return premise;
-                  });
-                }
-                return premiseGroup;
-              })
-              .flattenDeep()
-              .value();
+    function _getSurroundingPremises(premises, premise) {
+      var premiseIndex, upPremise, downPremise;
+      premiseIndex = premises.indexOf(premise);
+      upPremise = premises[premiseIndex];
+      downPremise = premises[premiseIndex + 1];
+      return [upPremise, downPremise];
+    }
+
+    function _mergePremiseScopes(premises, premiseToRemove) {
+      var prevScopeId, prevScopeLayer, layerIncrement;
+      layerIncrement = 0;
+      return _.map(premises, function (premise) {
+        if (prevScopeLayer === premise.scopeLayer && prevScopeId !== premise.scopeId) {
+          layerIncrement++;
+        }
+        prevScopeLayer = premise.scopeLayer;
+        prevScopeId = premise.scopeId;
+        premise.scopeLayer += layerIncrement;
+        return premise;
+      });
     }
 
     return {

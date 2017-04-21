@@ -4,7 +4,7 @@ angular
 
     var id = 0;
     function Scope(props) {
-      this.id = ++id;
+      this.id = props.id || ++id;
       this.layer = props.layer;
       this.isFocused = true;
       this.items = [];

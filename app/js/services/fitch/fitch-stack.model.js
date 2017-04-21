@@ -44,8 +44,53 @@ angular
       return _.filter(this.scopes, 'isFocused')[0];
     };
 
-    FitchStack.prototype.setCurrentLayer = function(currentLayer) {
-      scopeLayer = currentLayer;
+    FitchStack.prototype.reset = function (premises) {
+      var currentScope;
+      this.scopes.length = 0;
+      this.scopeHistory.length = 0;
+      this.scopes = _setScopesItems(_createScopes(premises), premises);
+      currentScope = _.find(this.scopes, {
+        id: _getLastItem(premises).scopeId
+      });
+      currentScope.focus();
+      scopeLayer = currentScope.layer;
+      this.scopeHistory = this.scopes;
+    }
+
+    function _getLastItem(items) {
+      return items.slice(-1)[0];
+    }
+
+    function _createScopes(premises) {
+      return _.chain(premises)
+              .map(function (premise) {
+                return {
+                  layer: premise.scopeLayer,
+                  id: premise.scopeId
+                };
+              })
+              .uniqBy('id')
+              .map(function (scopeBase) {
+                return Scope.new({
+                  layer: scopeBase.layer,
+                  id: scopeBase.id
+                });
+              })
+              .value();
+    }
+
+    function _premisesByScope(premises) {
+      return _.groupBy(premises, 'scopeId');
+    }
+
+    function _setScopesItems(scopes, premises) {
+      return _.chain(scopes)
+              .map(function (scope) {
+                scope.items = _.sortBy(_premisesByScope(premises)[scope.id], 'scopeId');
+                scope.blur();
+                return scope;
+              })
+              .value();
     }
 
     return {
@@ -54,4 +99,5 @@ angular
         return new FitchStack(fitchProps);
       }
     }
+    
   });

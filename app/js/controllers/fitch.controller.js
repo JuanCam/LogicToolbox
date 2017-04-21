@@ -162,7 +162,7 @@ angular
         this.reiterate = function() {
           var reiterated, currentScope, selected;
           currentScope = this.structure.getCurrentScope();
-          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes)
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           reiterated = selected.map(function(premise, key) {
                               return Premise.new({
                                   scopeLayer: currentScope.layer,
@@ -183,7 +183,7 @@ angular
             this.premiseGraph.removeNode(premise);
           }.bind(this));
           scopeIds = _.map(this.premiseGraph.premises, 'scopeId');
-          this.structure = _resetStructure(this.structure, this.premiseGraph.premises, scopeIds);
+          this.structure.reset(this.premiseGraph.premises);
         };
         this.biconditionalIntro = function () {
           var selected, newPremises, secondPremise, currentScope;
@@ -214,8 +214,8 @@ angular
 
         function _getValidSelecedPremises(premises, scopes) {
           var scopeIds = _.map(scopes, 'id');
-          return _getSelectedPremises(premises).
-                  filter(function(premise) {
+          return _getSelectedPremises(premises)
+                 .filter(function(premise) {
                       return scopeIds.indexOf(premise.scopeId) !== -1;
                   });
         }
@@ -248,37 +248,10 @@ angular
           };
         }
 
-        function _appendPremiseChild(tree, childPremise, parentPremises) {
+        function _appendPremiseChild(structrue, childPremise, parentPremises) {
           _.forEach(parentPremises, function (premise) {
-            tree.appendChild(premise, childPremise);
-          })
-        }
-
-        function _getPremisesInScope(scope, premises) {
-          return _.filter(premises, function (premise) {
-            return premise.scopeId === scope.id;
+            structrue.appendChild(premise, childPremise);
           });
-        }
-
-        function _resetStructure(oldStructure, premises, scopeIds) {
-          var newStructure, newCurrentLayer, newCurrentScope;
-          newStructure = FitchStack.new();
-          newStructure.scopes = _.filter(oldStructure.scopeHistory, function(scope) {
-            return scopeIds.indexOf(scope.id) !== -1;
-          });
-          newCurrentLayer = _.chain(newStructure.scopes)
-                             .map('layer')
-                             .uniq()
-                             .max()
-                             .value();
-          newStructure.scopes = _.map(newStructure.scopes, function(scope) {
-            scope.isFocused = newCurrentLayer === scope.layer;
-            scope.items = _getPremisesInScope(scope, premises);
-            return scope;
-          });
-          newStructure.scopeHistory = oldStructure.scopeHistory;
-          newStructure.setCurrentLayer(newCurrentLayer);
-          return newStructure;
         }
 
     });
