@@ -6,9 +6,10 @@ angular
       FitchStack,
       Premise,
       PremiseTree,
-      fitchNegation,
+      fitchConjunction,
+      fitchDisjunction,
       fitchImplication,
-      fitchDisjunction
+      fitchNegation
     ) {
 
         this.marginLeft = 16;
@@ -39,29 +40,43 @@ angular
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if(!selected.length || !this.valueToDisjoin) {
+          if (!selected.length || !this.valueToDisjoin) {
               return;
           }
           newPremise = fitchDisjunction.introduction(this.valueToDisjoin, selected, currentScope);
           this.showDisjoinField = false;
           this.valueToDisjoin = '';
-          if(!newPremise) {
+          if (!newPremise) {
               return;
           }
           _entail.call(this, newPremise, selected);
         };
 
         /*Operations*/
+        this.andIntroduction = function () {
+          var selected, newPremise, secondPremise, currentScope;
+          currentScope = this.structure.getCurrentScope();
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+          _uncheckPremises(this.premiseGraph.premises, this.selected);
+          if (selected.length !== this.selected.length) {
+              return;
+          }
+          newPremise = fitchConjunction.introduction(selected, currentScope);
+          if (!newPremise) {
+              return;
+          }
+          _entail.call(this, newPremise, selected);
+        };
         this.negationIntro = function() {
           var selected, newPremise, secondPremise, currentScope;
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if(selected.length !== 2) {
+          if (selected.length !== 2) {
               return;
           }
           newPremise = fitchNegation.introduction(selected[0], selected[1], currentScope);
-          if(!newPremise) {
+          if (!newPremise) {
               return;
           }
           _entail.call(this, newPremise, selected);
@@ -71,11 +86,11 @@ angular
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if(selected.length > 1) {
+          if (selected.length > 1) {
               return;
           }
           newPremise = fitchNegation.elimination(selected[0], currentScope);
-          if(!newPremise) {
+          if (!newPremise) {
               return;
           }
           _entail.call(this, newPremise, selected);
@@ -96,11 +111,11 @@ angular
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if(selected.length !== 2) {
+          if (selected.length !== 2) {
               return;
           }
           newPremise = fitchImplication.elimination(selected[0], selected[1], currentScope);
-          if(!newPremise) {
+          if (!newPremise) {
               return;
           }
           _entail.call(this, newPremise, selected);
@@ -111,15 +126,15 @@ angular
           currentScope = this.structure.getCurrentScope();
           selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
-          if(selected.length < 3) {
+          if (selected.length < 3) {
               return;
           }
           groupedPremises = _groupOrPremises(selected);
-          if(!groupedPremises) {
+          if (!groupedPremises) {
               return;
           }
           newPremise = fitchDisjunction.elimination(groupedPremises, currentScope);
-          if(!newPremise) {
+          if (!newPremise) {
               return;
           }
           _entail.call(this, newPremise, groupedPremises);
@@ -187,13 +202,13 @@ angular
           disjunctions = _.filter(premises, function (premise) {
             return premise.isOr(premise.digest());
           });
-          if (disjunctions.length !== 1) {
+          if  (disjunctions.length !== 1) {
             return null;
           }
           implications = _.filter(premises, function (premise) {
             return premise.isImplication(premise.digest());
           });
-          if (implications.length !== premises.length - 1) {
+          if  (implications.length !== premises.length - 1) {
             return null;
           }
           return {
