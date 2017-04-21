@@ -11,7 +11,7 @@ angular
         scopeLayer: scope.layer,
         scopeId: scope.id,
         value: premiseValue.join('&')
-      })
+      });
     }
     this.elimination = function (premise, scope) {
       var digestedPremise = premise.digest();

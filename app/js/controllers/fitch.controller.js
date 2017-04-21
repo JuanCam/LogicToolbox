@@ -6,6 +6,7 @@ angular
       FitchStack,
       Premise,
       PremiseTree,
+      fitchBicondition,
       fitchConjunction,
       fitchDisjunction,
       fitchImplication,
@@ -158,7 +159,6 @@ angular
         this.orIntroduction = function () {
           this.showDisjoinField = true;
         };
-
         this.reiterate = function() {
           var reiterated, currentScope, selected;
           currentScope = this.structure.getCurrentScope();
@@ -176,7 +176,6 @@ angular
           _uncheckPremises(this.premiseGraph.premises, this.selected);
           this.structure.entail(reiterated[0]);
         };
-
         this.delete = function () {
           var selected, scopeIds;
           selected = _getSelectedPremises(this.premiseGraph.premises);
@@ -185,6 +184,22 @@ angular
           }.bind(this));
           scopeIds = _.map(this.premiseGraph.premises, 'scopeId');
           this.structure = _resetStructure(this.structure, this.premiseGraph.premises, scopeIds);
+        };
+        this.biconditionalIntro = function () {
+          var selected, newPremises, secondPremise, currentScope;
+          currentScope = this.structure.getCurrentScope();
+          selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
+          _uncheckPremises(this.premiseGraph.premises, this.selected);
+          if (selected.length !== 2) {
+            return;
+          }
+          newPremises = fitchBicondition.introduction(selected, currentScope);
+          if (!newPremises) {
+            return;
+          }
+          _.forEach(newPremises, function (premise) {
+            _entail.call(this, premise, selected);
+          }.bind(this));
         }
 
         /*Local functions*/
