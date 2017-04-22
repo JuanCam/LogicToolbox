@@ -8,50 +8,51 @@ angular
     id = 0;
 
   	function Premise(props) {
-  		var labelIndex, labelConst;
-  		labelIndex = 0;
-  		this.labels = {};
+      var labelIndex, labelConst;
+      labelIndex = 0;
+      this.labels = {};
       this.id = ++id;
-  		this.scopeLayer = props.scopeLayer;
-  		this.scopeId = props.scopeId;
-  		this.value = props.value;
+      this.scopeLayer = props.scopeLayer;
+      this.scopeId = props.scopeId;
+      this.value = props.value;
 
-  		this.digest = function(callback) {
-  			var premises, copyPremise, label, labels, value;
-  			value = this.value;
-  			premises = [];
-  			labels = {};
-  			while(premises) {
-  				premises = _breakPremise(value);
-  				_.each(_extractPremises(value), function(premise) {
+      this.digest = function(callback) {
+        var premises, copyPremise, label, labels, value;
+        value = this.value;
+        premises = [];
+        labels = {};
+        while(premises) {
+          premises = _breakPremise(value);
+          _.each(_extractPremises(value), function(premise) {
             label =  ++labelIndex;
-  					copyPremise = premise.slice();
-  					labels[label] = _createLabels(labels, label, copyPremise);
-  					value = _reducePremise(value, _unwrap(premise), label);
-  					if (callback) {
-  						callback(premise, value, label);
-  					}
-  				});
-  			}
-  			this.labels = _.assign({}, labels);
-  			return value;
-  		}
+            copyPremise = premise.slice();
+            labels[label] = _createLabels(labels, label, copyPremise);
+            value = _reducePremise(value, _unwrap(premise), label);
+            if (callback) {
+                callback(premise, value, label);
+            }
+          });
+        }
+
+        this.labels = _.assign({}, labels);
+        return value;
+      }
   	}
 
     Premise.prototype.isImplication = function(structrue) {
   	  var base = structrue || this.value;
-      return base.match(IMPLICATION_REGEX);
+      return !!base.match(IMPLICATION_REGEX);
     };
     Premise.prototype.isAnd = function (structrue) {
-    	var base = structrue || this.value;
+      var base = structrue || this.value;
       return /[&]/g.exec(base);
     };
     Premise.prototype.isOr = function (structrue) {
-    	var base = structrue || this.value;
+      var base = structrue || this.value;
       return /[|]/g.exec(base);
     };
     Premise.prototype.isBicon = function (structrue) {
-    	var base = structrue || this.value;
+      var base = structrue || this.value;
       return /[<][=][>]/g.exec(base);
     };
     Premise.prototype.expand = function(premiseLabel) {
@@ -65,20 +66,20 @@ angular
       return  symbol + _expandPremise(labels, premise);
     };
     Premise.prototype.getAssumption = function(structrue) {
-    	var base, valuesMatched;
-    	base = structrue || this.value;
-    	valuesMatched = base.split(IMPLICATION_REGEX);
-    	return (valuesMatched) ? this.expand(valuesMatched[0]) : undefined;
+      var base, valuesMatched;
+      base = structrue || this.value;
+      valuesMatched = base.split(IMPLICATION_REGEX);
+      return (valuesMatched) ? this.expand(valuesMatched[0]) : undefined;
     }
     Premise.prototype.getConclusion = function(structrue) {
-    	var base, valuesMatched;
-    	base = structrue || this.value;
-    	valuesMatched = base.split(IMPLICATION_REGEX);
-    	return (valuesMatched) ? this.expand(valuesMatched[1]) : undefined;
+      var base, valuesMatched;
+      base = structrue || this.value;
+      valuesMatched = base.split(IMPLICATION_REGEX);
+      return (valuesMatched) ? this.expand(valuesMatched[1]) : undefined;
     }
     Premise.prototype.getPrimitives = function(structrue) {
-    	var base = structrue || this.value;
-    	return base.match(/\w+/g);
+      var base = structrue || this.value;
+      return base.match(/\w+/g);
     }
     Premise.prototype.removeNegation = function(structrue) {
       var base = structrue || this.value;
@@ -97,7 +98,7 @@ angular
     };
 
     function _breakPremise(value) {
-    	return value.match(/[(]{1}[\w~<=>|&]+(?=[)]{1})[)]{1}/g);
+      return value.match(/[(]{1}[\w~<=>|&]+(?=[)]{1})[)]{1}/g);
     }
 
     function _createLabels (labels, label, premise) {
@@ -109,7 +110,7 @@ angular
     }
 
     function _extractPremises(premise) {
-    	return (_breakPremise(premise)) ? _breakPremise(premise) : [premise];
+      return (_breakPremise(premise)) ? _breakPremise(premise) : [premise];
     }
 
     function _reducePremise(premise, subPremise, label) {

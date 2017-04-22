@@ -23,7 +23,7 @@ angular
 
         this.assume = function() {
           var currentScope, labels, headPremise;
-
+          
           headPremise = Premise.new({
             value: this.premise
           });

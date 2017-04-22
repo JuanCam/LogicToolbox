@@ -10,25 +10,13 @@
                   <span class="input-group-btn">
                       <button class="btn btn-info" ng-click="fitch.assume()">
                         Add
-                        <span class="glyphicon glyphicon-plus"></span>
+                        <span class="glyphicon glyphicon-plus add-icon"></span>
                       </button>
                   </span>
               </div>
           </div>
       </div>
       <div class="row fitch-operations">
-          <div class="list-group fitch-group-operations">
-              <button class="list-group-item list-group-item-warning" ng-click="fitch.reiterate()">
-                Reiterate
-                <span class="glyphicon glyphicon-repeat"></span>
-              </button>
-              <button class="list-group-item list-group-item-danger" ng-click="fitch.delete()">
-                Delete
-                <span class="glyphicon glyphicon-remove"></span>
-              </button>
-              <button class="list-group-item" ng-click="fitch.negationIntro()">Negation Introduction</button>
-              <button class="list-group-item" ng-click="fitch.negationElim()">Negation Elimination</button>
-          </div>
           <div class="list-group fitch-group-operations">
               <button class="list-group-item" ng-click="fitch.andIntroduction()">And Introduction</button>
               <button class="list-group-item" ng-click="fitch.andElimination()">And Elimination</button>
@@ -40,6 +28,18 @@
               <button class="list-group-item" ng-click="fitch.implicationElim()">Implication Elimination</button>
               <button class="list-group-item" ng-click="fitch.biconditionalIntro()">Biconditional Intro</button>
               <button class="list-group-item" ng-click="fitch.biconditionalElim()">Biconditional Elim</button>
+          </div>
+          <div class="list-group fitch-group-operations">
+              <button class="list-group-item" ng-click="fitch.negationIntro()">Negation Introduction</button>
+              <button class="list-group-item" ng-click="fitch.negationElim()">Negation Elimination</button>
+              <button class="list-group-item list-group-item-warning" ng-click="fitch.reiterate()">
+                Reiterate
+                <span class="glyphicon glyphicon-repeat"></span>
+              </button>
+              <button class="list-group-item list-group-item-danger" ng-click="fitch.delete()">
+                Delete
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
           </div>
       </div>
     </div>
@@ -56,7 +56,8 @@
     <div class="fitch-premise" ng-repeat="premise in fitch.premiseGraph.premises track by $index">
         <span class="fitch-premise-line text-muted">{{$index + 1}}) </span>
         <div class="fitch-premise-row">
-          <input type="checkbox" ng-model="premise.checked">
+          <input type="checkbox" id="fitch-check-{{$index + 1}}" ng-model="premise.checked" class="fitch-checkbox-input">
+          <label for="fitch-check-{{$index + 1}}" class="fitch-checkbox"></label>
           <div class="fitch-premise-value" ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
         </div>
     </div>
