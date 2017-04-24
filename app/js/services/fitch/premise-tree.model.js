@@ -7,12 +7,12 @@ angular
       this.tree = [];
     }
 
-    PremiseTree.prototype.append = function (premiseNode) {
+    PremiseTree.prototype.appendNode = function (premiseNode) {
       this.tree.push([]);
       this.premises.push(premiseNode);
     }
 
-    PremiseTree.prototype.appendChild = function (parentPremise, childPremise) {
+    PremiseTree.prototype.appendChildNode = function (parentPremise, childPremise) {
       var parentIndex, childIndex;
       parentIndex = this.premises.indexOf(parentPremise);
       childIndex = this.premises.indexOf(childPremise);

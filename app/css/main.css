@@ -90,6 +90,13 @@ body {
   justify-content: space-between;
   margin-left: 5rem;
 }
+.refresh-section {
+  padding: 0.5rem 0;
+  color: #33ccff;
+}
+.refresh-button {
+  cursor: pointer;
+}
 .truth-table {
     margin-top: 15px;
 }

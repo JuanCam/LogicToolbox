@@ -7,6 +7,7 @@ angular
     function FitchStack(props) {
       this.scopes = [];
       this.scopeHistory = [];
+      scopeLayer = 0;
     }
 
     FitchStack.prototype.closeScope = function() {
@@ -99,5 +100,5 @@ angular
         return new FitchStack(fitchProps);
       }
     }
-    
+
   });
