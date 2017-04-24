@@ -59,7 +59,7 @@ angular
       var premise, indexPremise, labels, symbol;
       indexPremise = premiseLabel.replace(NEGATION_REGEX, '');
       labels = this.labels;
-      premise = labels[indexPremise] || premiseLabel;
+      premise = labels[indexPremise] || this.removeNegation(premiseLabel);
       symbol = (this.hasNegation(premiseLabel))
       ? premiseLabel.match(NEGATION_REGEX)[0]
       : '';
