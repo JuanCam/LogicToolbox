@@ -5,9 +5,11 @@ angular
   .service('fitchImplication', function (Premise) {
 
     this.introduction = function(scope, lastScope) {
-      var head, last, assumption, conclusion;
+      var head, last, digestedHead, digestedLast, assumption, conclusion;
       head = lastScope.head;
       last = lastScope.last;
+      digestedHead = head.digest();
+      digestedLast = last.digest();
 
       assumption = (head.isCompound(head.value))
                       ? '(' + head.value + ')'
@@ -16,11 +18,11 @@ angular
       conclusion = (last.isCompound(last.value))
                       ? '(' + last.value + ')'
                       : last.value;
-
-      if (head.hasNegation(head.digest())) {
+      
+      if (head.hasNegation(digestedHead) && digestedHead !== head.value) {
           assumption = head.value;
       }
-      if (last.hasNegation(last.digest())) {
+      if (last.hasNegation(digestedLast) && digestedLast !== last.value) {
           conclusion = last.value;
       }
 

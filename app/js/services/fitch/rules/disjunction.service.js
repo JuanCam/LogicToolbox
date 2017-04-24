@@ -26,18 +26,13 @@ angular
     }
 
     this.introduction = function (value, selected, scope) {
-      var selectedValues, finalValue;
-      selectedValues = _.map(selected, function (premise) {
+      var selectedValues = _.map(selected, function (premise) {
           return (premise.isCompound())
                     ? '(' + premise.value + ')'
                     : premise.value;
       });
-      finalValue = [value].concat(selectedValues);
-      return Premise.new({
-        scopeLayer: scope.layer,
-        scopeId: scope.id,
-        value: finalValue.join('|')
-      });
+
+      return _getDisjunctions(value, selectedValues, scope)
     }
 
     function _getUniqueConclusions(implications) {
@@ -53,6 +48,27 @@ angular
       return _.map(implications, function (premise) {
                    return premise.expand(premise.getAssumption(premise.digest()));
               });
+    }
+
+    function _getDisjunctions(value, premisesValue, scope) {
+      return _.chain(premisesValue)
+              .map(function (premiseValue) {
+                return _getPosibleJoins([value, premiseValue], scope);
+              })
+              .flattenDeep()
+              .value();
+    }
+
+    function _getPosibleJoins(premisesValue, scope) {
+      var index = premisesValue.length;
+      return _.map(premisesValue, function (premiseValue) {
+        index--;
+        return Premise.new({
+          scopeLayer: scope.layer,
+          scopeId: scope.id,
+          value: premiseValue + '|' + premisesValue[index]
+        });
+      });
     }
 
     function _isValidOperation(premises, disjunction) {

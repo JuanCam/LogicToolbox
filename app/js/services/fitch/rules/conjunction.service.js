@@ -2,16 +2,12 @@ angular
   .module('logicToolsApp')
   .service('fitchConjunction', function (Premise) {
     this.introduction = function (premises, scope) {
-      var premiseValue = _.map(premises, function (premise) {
+      var selectedValues = _.map(premises, function (premise) {
           return (premise.isCompound())
                     ? '(' + premise.value + ')'
                     : premise.value;
       })
-      return Premise.new({
-        scopeLayer: scope.layer,
-        scopeId: scope.id,
-        value: premiseValue.join('&')
-      });
+      return _getConjuctions(selectedValues, scope);
     }
     this.elimination = function (premise, scope) {
       var digestedPremise = premise.digest();
@@ -26,5 +22,24 @@ angular
                 });
               })
               .value();
+    }
+
+    function _getConjuctions(premisesValue, scope) {
+      return _.chain(premisesValue)
+              .map(function (premiseValue) {
+                return _getPosibleJoins(premiseValue, premisesValue, scope);
+              })
+              .flattenDeep()
+              .value();
+    }
+
+    function _getPosibleJoins(value, premisesValue, scope) {
+      return _.map(premisesValue, function (premiseValue) {
+        return Premise.new({
+          scopeLayer: scope.layer,
+          scopeId: scope.id,
+          value: value + '&' + premiseValue
+        });
+      });
     }
   });

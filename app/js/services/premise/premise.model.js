@@ -66,17 +66,29 @@ angular
       return  symbol + _expandPremise(labels, premise);
     };
     Premise.prototype.getAssumption = function(structrue) {
-      var base, valuesMatched;
+      var base, splited
       base = structrue || this.value;
-      valuesMatched = base.split(IMPLICATION_REGEX);
-      return (valuesMatched) ? this.expand(valuesMatched[0]) : undefined;
-    }
+      splited = _splitImplication(base);
+      return (splited) ? splited[0] : undefined;
+    };
     Premise.prototype.getConclusion = function(structrue) {
-      var base, valuesMatched;
+      var base, splited
       base = structrue || this.value;
-      valuesMatched = base.split(IMPLICATION_REGEX);
-      return (valuesMatched) ? this.expand(valuesMatched[1]) : undefined;
-    }
+      splited = _splitImplication(base);
+      return (splited) ? splited[1] : undefined;
+    };
+    Premise.prototype.getExpandedAssumption = function(structrue) {
+      var base, splited
+      base = structrue || this.value;
+      splited = _splitImplication(base);
+      return (splited) ? this.expand(splited[0]) : undefined;
+    };
+    Premise.prototype.getExpandedConclusion = function(structrue) {
+      var base, splited
+      base = structrue || this.value;
+      splited = _splitImplication(base);
+      return (splited) ? this.expand(splited[1]) : undefined;
+    };
     Premise.prototype.getPrimitives = function(structrue) {
       var base = structrue || this.value;
       return base.match(/\w+/g);
@@ -128,6 +140,10 @@ angular
                 premiseValue = premiseValue.replace(label, labels[label]);
                 return premiseValue;
             }).slice(-1)[0];
+    }
+
+    function _splitImplication(value) {
+        return value.split(IMPLICATION_REGEX);
     }
 
     function _unwrap(value) {

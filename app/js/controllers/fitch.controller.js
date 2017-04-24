@@ -35,36 +35,36 @@ angular
       }
 
       this.disjoinPremise = function () {
-        var newPremise, currentScope, selected, disjointPremise;
+        var newPremises, currentScope, selected, disjointPremise;
         currentScope = this.structure.getCurrentScope();
         selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
         _uncheckPremises(this.premiseGraph.premises, this.selected);
         if (!selected.length || !this.valueToDisjoin) {
             return;
         }
-        newPremise = fitchDisjunction.introduction(this.valueToDisjoin, selected, currentScope);
+        newPremises = fitchDisjunction.introduction(this.valueToDisjoin, selected, currentScope);
         this.showDisjoinField = false;
         this.valueToDisjoin = '';
-        if (!newPremise) {
+        if (!newPremises) {
             return;
         }
-        _entail.call(this, newPremise, selected);
+        _multipleEntialment.call(this, newPremises, selected);
       };
 
       /*Operations*/
       this.andIntroduction = function () {
-        var selected, newPremise, secondPremise, currentScope;
+        var selected, newPremises, secondPremise, currentScope;
         currentScope = this.structure.getCurrentScope();
         selected = _getValidSelecedPremises(this.premiseGraph.premises, this.structure.scopes);
         _uncheckPremises(this.premiseGraph.premises, this.selected);
         if (selected.length < 2) {
           return;
         }
-        newPremise = fitchConjunction.introduction(selected, currentScope);
-        if (!newPremise) {
+        newPremises = fitchConjunction.introduction(selected, currentScope);
+        if (!newPremises) {
           return;
         }
-        _entail.call(this, newPremise, selected);
+        _multipleEntialment.call(this, newPremises, selected);
       };
       this.andElimination = function () {
         var selected, newPremises, secondPremise, currentScope;
@@ -78,9 +78,7 @@ angular
         if (!newPremises) {
           return;
         }
-        _.forEach(newPremises, function (premise) {
-          _entail.call(this, premise, selected);
-        }.bind(this));
+        _multipleEntialment.call(this, newPremises, selected);
       };
       this.negationIntro = function() {
         var selected, newPremise, secondPremise, currentScope;
@@ -196,9 +194,7 @@ angular
         if (!newPremises) {
           return;
         }
-        _.forEach(newPremises, function (premise) {
-          _entail.call(this, premise, selected);
-        }.bind(this));
+        _multipleEntialment.call(this, newPremises, selected);
       }
       this.biconditionalElim = function () {
         var selected, newPremises, secondPremise, currentScope;
@@ -212,9 +208,7 @@ angular
         if (!newPremises) {
           return;
         }
-        _.forEach(newPremises, function (premise) {
-          _entail.call(this, premise, selected);
-        }.bind(this));
+        _multipleEntialment.call(this, newPremises, selected);
       }
 
       /*Local functions*/
@@ -230,6 +224,12 @@ angular
       function _entail(premise, parentPremises) {
         this.structure.entail(premise);
         _appendPremiseChild(this.premiseGraph, premise, parentPremises);
+      }
+
+      function _multipleEntialment(premises, parentPremises) {
+        _.forEach(premises, function (premise) {
+          _entail.call(this, premise, parentPremises);
+        }.bind(this));
       }
 
       function _getSelectedPremises(premises) {

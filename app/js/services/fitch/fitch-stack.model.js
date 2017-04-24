@@ -50,6 +50,7 @@ angular
       this.scopes.length = 0;
       this.scopeHistory.length = 0;
       this.scopes = _setScopesItems(_createScopes(premises), premises);
+      //TODO: Check scope layer
       currentScope = _.find(this.scopes, {
         id: _getLastItem(premises).scopeId
       });

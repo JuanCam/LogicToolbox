@@ -67,7 +67,7 @@ angular
   	}
 
   	function _validConclusion(premiseOne, premiseTwo) {
-  		return _removeNegation(_getConclusion(premiseOne)) === _getConclusion(premiseTwo);
+  		return _getPureConclusion(premiseOne) === _getConclusion(premiseTwo);
   	}
 
   	function _validNegation(premiseOne, premiseTwo) {
@@ -96,6 +96,13 @@ angular
       return (premise.hasNegation(conclusion))
       ? '~' + expanded
       : expanded;
+    }
+
+    function _getPureConclusion(premise) {
+      var structure, conclusion, expanded;
+      structure = premise.digest();
+      conclusion = premise.getConclusion(structure);
+      return premise.expand(_removeNegation(conclusion));
     }
 
     function _getRawConclusion(premise, structure) {

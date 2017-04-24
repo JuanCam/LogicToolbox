@@ -31,10 +31,10 @@ angular
           secondConclusion, secondAssumption;
       firstValue = firstPremise.digest();
       secondValue = secondPremise.digest();
-      firstConclusion = firstPremise.getConclusion(firstValue);
-      firstAssumption = firstPremise.getAssumption(firstValue);
-      secondConclusion = secondPremise.getConclusion(secondValue);
-      secondAssumption = secondPremise.getAssumption(secondValue);
+      firstConclusion = firstPremise.getExpandedConclusion(firstValue);
+      firstAssumption = firstPremise.getExpandedAssumption(firstValue);
+      secondConclusion = secondPremise.getExpandedConclusion(secondValue);
+      secondAssumption = secondPremise.getExpandedAssumption(secondValue);
       return firstConclusion === secondAssumption && secondConclusion === firstAssumption;
     }
     function _getImplications(premise, digested, scope) {
@@ -56,7 +56,7 @@ angular
         return Premise.new({
           scopeLayer: scope.layer,
           scopeId: scope.id,
-          value: premise.getConclusion(value) + '<=>' + premise.getAssumption(value)
+          value: premise.getExpandedConclusion(value) + '<=>' + premise.getExpandedAssumption(value)
         })
       });
     }

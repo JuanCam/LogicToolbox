@@ -46,15 +46,15 @@
               </button>
           </div>
       </div>
+      <div class="row col-sm-6 col-sm-offset-3 fitch-operations" ng-if="fitch.showDisjoinField">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Insert premise to disjoin" ng-model="fitch.valueToDisjoin"/>
+          <span class="input-group-btn">
+              <button class="btn btn-danger" ng-click="fitch.disjoinPremise()">Insert</button>
+          </span>
+        </div>
+      </div>
     </div>
-</div>
-<div class="row col-sm-6 col-sm-offset-3 fitch-operations" ng-if="fitch.showDisjoinField">
-  <div class="input-group">
-    <input type="text" class="form-control" placeholder="Insert premise to disjoin" ng-model="fitch.valueToDisjoin"/>
-    <span class="input-group-btn">
-        <button class="btn btn-danger" ng-click="fitch.disjoinPremise()">Insert</button>
-    </span>
-  </div>
 </div>
 <div class="fitch-structure">
     <div class="fitch-premise" ng-repeat="premise in fitch.premiseGraph.premises track by $index">
