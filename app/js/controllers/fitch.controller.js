@@ -23,7 +23,7 @@ angular
 
         this.assume = function() {
           var currentScope, labels, headPremise;
-          
+
           headPremise = Premise.new({
             value: this.premise
           });
@@ -113,13 +113,14 @@ angular
           _entail.call(this, newPremise, selected);
         };
         this.implicationIntro = function() {
-          var lastScope, currentScope, newPremise, head, last;
+          var lastScope, currentScope, newPremise;
           lastScope = this.structure.closeScope();
-          head = lastScope.head;
-          last = lastScope.last;
           currentScope = this.structure.getCurrentScope();
+          if (currentScope === 1) {
+            return
+          }
           newPremise = fitchImplication.introduction(currentScope, lastScope);
-          _entail.call(this, newPremise, [head, last]);
+          _entail.call(this, newPremise, [lastScope.head, lastScope.last]);
           _uncheckPremises(this.premiseGraph.premises, this.selected);
         };
 
