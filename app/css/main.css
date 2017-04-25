@@ -1,6 +1,10 @@
 body {
     padding: 0;
 }
+.assumption-section {
+  display: flex;
+  flex-direction: column;
+}
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -63,22 +67,25 @@ body {
 
 .fitch-premise {
     display: flex;
-    font-size: 17px;
+    font-size: 15px;
 }
 .fitch-premise-value {
-  border-left: 1px solid gray;
-  padding: 5px;
+  border-left: 1.5px solid gray;
+  padding: 7px;
 }
 .fitch-structure {
     margin: 20px 0px;
 }
 .fitch-operations {
     display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
+    flex-direction: column;
+    margin: 1rem;
 }
 .fitch-group-operations {
-    margin: 15px 0;
+    margin: 0;
+}
+.fitch-single-operation {
+  border-radius: 0 !important;
 }
 .fitch-premise-line {
     font-size: 12px;
@@ -92,7 +99,7 @@ body {
   margin-left: 5rem;
 }
 .refresh-section {
-  padding: 0.5rem 0;
+  padding: 15px;
   color: #33ccff;
 }
 .refresh-button {
@@ -106,6 +113,10 @@ body {
 }
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
+  .assumption-section {
+    display: flex;
+    flex-direction: row;
+  }
     .container {
         max-width: 730px;
     }
@@ -119,5 +130,18 @@ body {
     /* Space out the masthead */
     .header {
         margin-bottom: 30px;
+    }
+    .fitch-operations {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+    .fitch-group-operations {
+        margin: 15px 0;
+    }
+    .refresh-section {
+      padding: 0.5rem 0;
+      color: #33ccff;
     }
 }

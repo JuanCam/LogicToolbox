@@ -168,10 +168,9 @@ angular
                             });
                         });
         _.forEach(reiterated, function (premise) {
-          _appendPremiseChild(this.premiseGraph, premise, selected);
+          _entail.call(this, premise, selected);
         }.bind(this));
         _uncheckPremises(this.premiseGraph.premises, this.selected);
-        this.structure.entail(reiterated[0]);
       };
       this.delete = function () {
         var selected, scopeIds;
@@ -213,7 +212,7 @@ angular
 
       /*Local functions*/
       function _init() {
-        this.marginLeft = 16; //pixels
+        this.marginLeft = 17; //pixels
         this.premise = '';
         this.premiseGraph = PremiseTree.new();
         this.selected = [];

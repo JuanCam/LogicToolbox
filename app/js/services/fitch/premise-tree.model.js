@@ -4,11 +4,11 @@ angular
 
     function PremiseTree(props) {
       this.premises = [];
-      this.tree = [];
+      this.proofTree = [];
     }
 
     PremiseTree.prototype.appendNode = function (premiseNode) {
-      this.tree.push([]);
+      this.proofTree.push([]);
       this.premises.push(premiseNode);
     }
 
@@ -17,24 +17,24 @@ angular
       parentIndex = this.premises.indexOf(parentPremise);
       childIndex = this.premises.indexOf(childPremise);
 
-      this.tree[parentIndex].push(childPremise.id);
+      this.proofTree[parentIndex].push(childPremise.id);
 
       if (childIndex === -1) {
         this.premises.push(childPremise);
-        this.tree.push([]);
+        this.proofTree.push([]);
       }
     }
 
     PremiseTree.prototype.removeNode = function (premiseToRemove) {
       var childrenIds, grandChildrenIds;
-      childrenIds = _getChildrenIds(this.tree, this.premises, premiseToRemove);
+      childrenIds = _getChildrenIds(this.proofTree, this.premises, premiseToRemove);
       while (childrenIds.length) {
-        grandChildrenIds = _getGrandchildren(this.tree, this.premises, childrenIds);
-        this.tree = _cutTree(this.tree, this.premises, childrenIds);
+        grandChildrenIds = _getGrandchildren(this.proofTree, this.premises, childrenIds);
+        this.proofTree = _cutTree(this.proofTree, this.premises, childrenIds);
         this.premises = _cutPremises(this.premises, childrenIds);
         childrenIds = grandChildrenIds;
       }
-      this.tree = _removeTreeNode(this.tree, this.premises, premiseToRemove);
+      this.proofTree = _removeTreeNode(this.proofTree, this.premises, premiseToRemove);
       this.premises = _removePremise(this.premises, premiseToRemove);
       return this.premises;
     }
@@ -58,9 +58,9 @@ angular
       });
     }
 
-    function _removeTreeNode(tree, premises, premiseToRemove) {
+    function _removeTreeNode(proofTree, premises, premiseToRemove) {
       var premiseIndex = _getPremiseNodeIndex(premises, premiseToRemove);
-      return _.chain(tree)
+      return _.chain(proofTree)
               .filter(function (node, indexNode) {
                 return indexNode !== premiseIndex;
               })
@@ -75,9 +75,9 @@ angular
       return _.find(premises, {id: id});
     }
 
-    function _getChildrenIds(tree, premises, premise) {
+    function _getChildrenIds(proofTree, premises, premise) {
       var index = _getPremiseNodeIndex(premises, premise);
-      return tree[index];
+      return proofTree[index];
     }
 
     function _getPremiseNodeIndex(premises, premise) {
@@ -87,8 +87,8 @@ angular
               .value();
     }
 
-    function _cutTree(tree, premises, ids) {
-      return _.filter(tree, function (node, indexNode) {
+    function _cutTree(proofTree, premises, ids) {
+      return _.filter(proofTree, function (node, indexNode) {
         return ids.indexOf(premises[indexNode].id) === -1;
       });
     }
@@ -99,11 +99,11 @@ angular
       });
     }
 
-    function _getGrandchildren(tree, premises, childrenIds) {
+    function _getGrandchildren(proofTree, premises, childrenIds) {
       return _.chain(childrenIds)
               .map(function (id) {
                 var premise = _findPremise(premises, id) || {};
-                return _getChildrenIds(tree, premises, premise);
+                return _getChildrenIds(proofTree, premises, premise);
                })
               .flattenDeep()
               .filter(function (id) {
@@ -118,7 +118,6 @@ angular
       return _.map(premises, function (premise) {
         if (prevScopeLayer === premise.scopeLayer && prevScopeId !== premise.scopeId) {
           layerIncrement++;
-          premise.isScopeClosed = false;
         }
         prevScopeLayer = premise.scopeLayer;
         prevScopeId = premise.scopeId;

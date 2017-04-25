@@ -12,13 +12,7 @@ angular
 
     FitchStack.prototype.closeScope = function() {
       var removedScope, newCurrentScope;
-      debugger
       removedScope = _.remove(this.scopes, 'isFocused');
-      removedScope.items = _.map(removedScope.items, function(premise) {
-        premise.isScopeClosed = true;
-        return premise;
-      });
-      removedScope.isClosed = true;
       newCurrentScope = this.scopes[this.scopes.length - 1];
       newCurrentScope.focus();
       newCurrentScope.layer = --scopeLayer;
@@ -62,7 +56,7 @@ angular
       currentScope.focus();
       scopeLayer = currentScope.layer;
       this.scopeHistory = this.scopes;
-      //TODO: filter scopes according to stack Add isClosed boolean to scope class.
+      this.scopes = _getActiveScopes(this.scopes, premises);
     }
 
     function _getLastItem(items) {
@@ -99,6 +93,25 @@ angular
                 return scope;
               })
               .value();
+    }
+
+    function _getActiveScopes(scopes, premises) {
+      var prevScopeLayer, prevScopePosition, activeIds, scopePosition;
+      activeIds = [];
+      prevScopeLayer = 0;
+      _.forEach(premises, function (premise) {
+        scopePosition = activeIds.indexOf(premise.scopeId);
+        if (prevScopeLayer <= premise.scopeLayer && scopePosition === -1) {
+          activeIds.push(premise.scopeId);
+        } else if (prevScopeLayer > premise.scopeLayer && scopePosition !== -1) {
+          activeIds.splice(prevScopePosition, 1);
+        }
+        prevScopeLayer = premise.scopeLayer;
+        prevScopePosition = scopePosition;
+      });
+      return _.filter(scopes, function (scope) {
+        return activeIds.indexOf(scope.id) !== -1;
+      })
     }
 
     return {
