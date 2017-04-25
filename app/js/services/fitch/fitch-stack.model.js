@@ -2,18 +2,25 @@ angular
   .module('logicToolsApp')
   .factory('FitchStack', function(Scope) {
 
-    var scopeLayer = 0;
+    var scopeLayer, universalScope;
+    scopeLayer = 0;
+    universalScope = Scope.new({
+      layer: scopeLayer
+    });
 
     function FitchStack(props) {
-      this.scopes = [];
-      this.scopeHistory = [];
       scopeLayer = 0;
+      this.scopes = [universalScope];
+      this.scopeHistory = [universalScope];
     }
 
     FitchStack.prototype.closeScope = function() {
       var removedScope, newCurrentScope;
       removedScope = _.remove(this.scopes, 'isFocused');
       newCurrentScope = this.scopes[this.scopes.length - 1];
+      if (!newCurrentScope) {
+        return removedScope[0];
+      }
       newCurrentScope.focus();
       newCurrentScope.layer = --scopeLayer;
       return removedScope[0];
@@ -55,8 +62,8 @@ angular
       });
       currentScope.focus();
       scopeLayer = currentScope.layer;
-      this.scopeHistory = this.scopes;
-      this.scopes = _getActiveScopes(this.scopes, premises);
+      this.scopeHistory = [universalScope].concat(this.scopes);
+      this.scopes = [universalScope].concat(_getActiveScopes(this.scopes, premises));
     }
 
     function _getLastItem(items) {

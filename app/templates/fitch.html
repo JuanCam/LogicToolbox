@@ -2,10 +2,12 @@
 <div class="fitch-structure">
     <div class="fitch-premise" ng-repeat="premise in fitch.premiseGraph.premises track by $index">
         <span class="fitch-premise-line text-muted">{{$index + 1}}) </span>
+        <input type="checkbox" id="fitch-check-{{$index + 1}}" ng-model="premise.checked" class="fitch-checkbox-input">
+        <label for="fitch-check-{{$index + 1}}" class="fitch-checkbox"></label>
         <div class="fitch-premise-row">
-          <input type="checkbox" id="fitch-check-{{$index + 1}}" ng-model="premise.checked" class="fitch-checkbox-input">
-          <label for="fitch-check-{{$index + 1}}" class="fitch-checkbox"></label>
-          <div class="fitch-premise-value" ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
+          <div class="fitch-premise-value"
+               ng-class="{'universal-scope': !premise.scopeLayer}"
+               ng-style="{'margin-left':fitch.marginLeft * premise.scopeLayer}">{{premise.value}}</div>
         </div>
     </div>
 </div>
@@ -58,11 +60,17 @@
               </button>
           </div>
       </div>
-      <div class="row col-sm-6 col-sm-offset-3 fitch-operations" ng-if="fitch.showDisjoinField">
+      <div class="row col-sm-7 col-sm-offset-2" ng-if="fitch.showDisjoinField">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Insert premise to disjoin" ng-model="fitch.valueToDisjoin"/>
           <span class="input-group-btn">
-              <button class="btn btn-danger" ng-click="fitch.disjoinPremise()">Insert</button>
+              <button class="btn"
+                      ng-class="{'btn-default' : !fitch.valueToDisjoin, 'btn-info': fitch.valueToDisjoin}"
+                      ng-click="fitch.disjoinPremise()"
+                      ng-disabled="!fitch.valueToDisjoin">
+                      Insert
+              </button>
+              <button class="btn btn-danger" ng-click="fitch.closeDisjoinField()">Cancel</button>
           </span>
         </div>
       </div>

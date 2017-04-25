@@ -8,37 +8,34 @@ angular
     id = 0;
 
   	function Premise(props) {
-      var labelIndex, labelConst;
-      labelIndex = 0;
       this.labels = {};
       this.id = ++id;
       this.scopeLayer = props.scopeLayer;
       this.scopeId = props.scopeId;
-      this.isScopeClosed = false;
-      this.value = props.value;
-
-      this.digest = function(callback) {
-        var premises, copyPremise, label, labels, value;
-        value = this.value;
-        premises = [];
-        labels = {};
-        while(premises) {
-          premises = _breakPremise(value);
-          _.each(_extractPremises(value), function(premise) {
-            label =  ++labelIndex;
-            copyPremise = premise.slice();
-            labels[label] = _createLabels(labels, label, copyPremise);
-            value = _reducePremise(value, _unwrap(premise), label);
-            if (callback) {
-                callback(premise, value, label);
-            }
-          });
-        }
-
-        this.labels = _.assign({}, labels);
-        return value;
-      }
+      this.value = _removeSpaces(props.value);
   	}
+
+    Premise.prototype.digest = function(callback) {
+      var premises, copyPremise, label, labels, value;
+      value = this.value;
+      premises = [];
+      labels = {};
+      label = 0;
+
+      while(premises) {
+        premises = _breakPremise(value);
+        _.each(_extractPremises(value), function(premise) {
+          copyPremise = premise.slice();
+          labels[++label] = _createLabels(labels, copyPremise);
+          value = _reducePremise(value, _unwrap(premise), label);
+          if (callback) {
+              callback(premise, value, label);
+          }
+        });
+      }
+      this.labels = _.assign({}, labels);
+      return value;
+    }
 
     Premise.prototype.isImplication = function(structrue) {
   	  var base = structrue || this.value;
@@ -114,11 +111,11 @@ angular
       return value.match(/[(]{1}[\w~<=>|&]+(?=[)]{1})[)]{1}/g);
     }
 
-    function _createLabels (labels, label, premise) {
+    function _createLabels (labels, premise) {
       var createdLabels;
       createdLabels = _.keys(labels);
       return Array.prototype.map.call(premise, function(val, k) {
-          return (createdLabels.indexOf(val) > -1) ? labels[val] : val;
+          return (createdLabels.indexOf(val) !== -1) ? labels[val] : val;
       }).join('');
     }
 
@@ -154,6 +151,10 @@ angular
       }
       unwraped = value.match(/[(]{1}([\w\W]+)[)]{1}/);
       return (unwraped) ? unwraped[1] : value;
+    }
+
+    function _removeSpaces(value) {
+      return value.replace(/\s+/g,'');
     }
 
     return {

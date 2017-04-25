@@ -10,7 +10,8 @@ angular
       fitchConjunction,
       fitchDisjunction,
       fitchImplication,
-      fitchNegation
+      fitchNegation,
+      syntaxChecker
     ) {
 
       _init.call(this);
@@ -22,16 +23,25 @@ angular
           value: this.premise
         });
 
+        if (!syntaxChecker.validate(headPremise)) {
+          return;
+        }
+
         this.structure.openScope(headPremise);
         currentScope = this.structure.getCurrentScope();
-        this.premiseGraph.appendNode(headPremise);
         headPremise.scopeId = currentScope.id;
         headPremise.scopeLayer = currentScope.layer;
+        this.premiseGraph.appendNode(headPremise);
         this.premise = '';
       };
 
       this.refresh = function () {
         _init.call(this);
+      }
+
+      this.closeDisjoinField = function () {
+        this.showDisjoinField = false;
+        this.valueToDisjoin = '';
       }
 
       this.disjoinPremise = function () {
@@ -112,9 +122,6 @@ angular
         var lastScope, currentScope, newPremise;
         lastScope = this.structure.closeScope();
         currentScope = this.structure.getCurrentScope();
-        if (currentScope === 1) {
-          return;
-        }
         newPremise = fitchImplication.introduction(currentScope, lastScope);
         _entail.call(this, newPremise, [lastScope.head, lastScope.last]);
         _uncheckPremises(this.premiseGraph.premises, this.selected);
@@ -212,7 +219,7 @@ angular
 
       /*Local functions*/
       function _init() {
-        this.marginLeft = 17; //pixels
+        this.marginLeft = 20; //pixels
         this.premise = '';
         this.premiseGraph = PremiseTree.new();
         this.selected = [];
