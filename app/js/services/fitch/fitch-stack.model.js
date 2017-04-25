@@ -12,7 +12,13 @@ angular
 
     FitchStack.prototype.closeScope = function() {
       var removedScope, newCurrentScope;
+      debugger
       removedScope = _.remove(this.scopes, 'isFocused');
+      removedScope.items = _.map(removedScope.items, function(premise) {
+        premise.isScopeClosed = true;
+        return premise;
+      });
+      removedScope.isClosed = true;
       newCurrentScope = this.scopes[this.scopes.length - 1];
       newCurrentScope.focus();
       newCurrentScope.layer = --scopeLayer;
@@ -50,13 +56,13 @@ angular
       this.scopes.length = 0;
       this.scopeHistory.length = 0;
       this.scopes = _setScopesItems(_createScopes(premises), premises);
-      //TODO: Check scope layer
       currentScope = _.find(this.scopes, {
         id: _getLastItem(premises).scopeId
       });
       currentScope.focus();
       scopeLayer = currentScope.layer;
       this.scopeHistory = this.scopes;
+      //TODO: filter scopes according to stack Add isClosed boolean to scope class.
     }
 
     function _getLastItem(items) {

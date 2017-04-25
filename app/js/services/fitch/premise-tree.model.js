@@ -118,6 +118,7 @@ angular
       return _.map(premises, function (premise) {
         if (prevScopeLayer === premise.scopeLayer && prevScopeId !== premise.scopeId) {
           layerIncrement++;
+          premise.isScopeClosed = false;
         }
         prevScopeLayer = premise.scopeLayer;
         prevScopeId = premise.scopeId;

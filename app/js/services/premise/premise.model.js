@@ -14,6 +14,7 @@ angular
       this.id = ++id;
       this.scopeLayer = props.scopeLayer;
       this.scopeId = props.scopeId;
+      this.isScopeClosed = false;
       this.value = props.value;
 
       this.digest = function(callback) {
