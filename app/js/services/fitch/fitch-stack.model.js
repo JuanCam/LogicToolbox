@@ -62,8 +62,8 @@ angular
       });
       currentScope.focus();
       scopeLayer = currentScope.layer;
-      this.scopeHistory = [universalScope].concat(this.scopes);
-      this.scopes = [universalScope].concat(_getActiveScopes(this.scopes, premises));
+      this.scopeHistory = this.scopes;
+      this.scopes = _getActiveScopes(this.scopes, premises);
     }
 
     function _getLastItem(items) {
@@ -71,21 +71,24 @@ angular
     }
 
     function _createScopes(premises) {
-      return _.chain(premises)
-              .map(function (premise) {
-                return {
-                  layer: premise.scopeLayer,
-                  id: premise.scopeId
-                };
-              })
-              .uniqBy('id')
-              .map(function (scopeBase) {
-                return Scope.new({
-                  layer: scopeBase.layer,
-                  id: scopeBase.id
-                });
-              })
-              .value();
+      var scopes = _.chain(premises)
+                    .map(function (premise) {
+                      return {
+                        layer: premise.scopeLayer,
+                        id: premise.scopeId
+                      };
+                    })
+                    .uniqBy('id')
+                    .map(function (scopeBase) {
+                      return Scope.new({
+                        layer: scopeBase.layer,
+                        id: scopeBase.id
+                      });
+                    })
+                    .value();
+      return _.find(scopes, {layer: 0}) 
+                  ? scopes
+                  : [universalScope].concat(scopes);
     }
 
     function _premisesByScope(premises) {
@@ -104,7 +107,7 @@ angular
 
     function _getActiveScopes(scopes, premises) {
       var prevScopeLayer, prevScopePosition, activeIds, scopePosition;
-      activeIds = [];
+      activeIds = [universalScope.id];
       prevScopeLayer = 0;
       _.forEach(premises, function (premise) {
         scopePosition = activeIds.indexOf(premise.scopeId);
@@ -118,7 +121,7 @@ angular
       });
       return _.filter(scopes, function (scope) {
         return activeIds.indexOf(scope.id) !== -1;
-      })
+      });
     }
 
     return {
