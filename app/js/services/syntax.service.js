@@ -12,4 +12,5 @@ angular
     function _emptyPremise(premise) {
       return !premise.value;
     }
+    
   });

@@ -3,23 +3,15 @@
         <h3 class="panel-title">Truth Table</h3>
     </div>
     <div class="panel-body">
-        <div class="col-sm-6 col-sm-offset-1">
-            <strong>Semantic rules when you create a premise</strong>
-            <div>Negation: (~) </div>
-            <div>And: (&) </div>
-            <div>Or: (|) </div>
-            <div>Implication: (=>) </div>
-            <div>Biconditional: (<=>)</div>
-            <div>Example: ~(p&q)=>(~p|~q) </div>
+        <div class="col-sm-4 text-center text-info"><strong>Enter your premise here:</strong></div>
+        <div class="col-sm-6">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="e.g. ~(p&q)=>(~p|~q)" ng-model="table.premise" />
+                <span class="input-group-btn">
+                    <button class="btn btn-success" ng-click="table.build()"><span class="glyphicon glyphicon-pencil"></span> Build</button>
+                </span>
+            </div>
         </div>
-    </div>
-</div>
-<div class="col-sm-6 col-sm-offset-3">
-    <div class="input-group">
-        <input type="text" class="form-control" placeholder="Premise" ng-model="table.premise" />
-        <span class="input-group-btn">
-            <button class="btn btn-success" ng-click="table.build()"><span class="glyphicon glyphicon-pencil"></span> Build</button>
-        </span>
     </div>
 </div>
 <div class="row">

@@ -17,10 +17,13 @@
       Fitch
     </div>
     <div class="panel-body">
+      <div class="col-sm-offset-3">
+      <strong class="text-info">Enter your assupmtion here:</strong>
+      </div>
       <div class="assumption-section">
           <div class="col-sm-6 col-md-offset-2">
               <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Premise" ng-model="fitch.premise" />
+                  <input type="text" class="form-control" placeholder="e.g. ~(p&q)=>(~p|~q)" ng-model="fitch.premise" />
                   <span class="input-group-btn">
                       <button class="btn btn-info" ng-click="fitch.assume()">
                         Add

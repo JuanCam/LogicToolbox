@@ -18,6 +18,7 @@ var allFiles = templates.concat(styles).concat(scripts);
 
 gulp.task('serve', function () {
   connect.server({
+    port: 8001,
     livereload: true,
     middleware: function (connect) {
       return [
