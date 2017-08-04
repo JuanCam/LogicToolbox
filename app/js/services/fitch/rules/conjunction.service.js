@@ -18,7 +18,8 @@ angular
                 return Premise.new({
                   scopeLayer: scope.layer,
                   scopeId: scope.id,
-                  value: premise.unwrap(expanded)
+                  value: premise.unwrap(expanded),
+                  productOf: 'And Elm.'
                 });
               })
               .value();
@@ -38,7 +39,8 @@ angular
         return Premise.new({
           scopeLayer: scope.layer,
           scopeId: scope.id,
-          value: value + '&' + premiseValue
+          value: value + '&' + premiseValue,
+          productOf: 'And Int.'
         });
       });
     }

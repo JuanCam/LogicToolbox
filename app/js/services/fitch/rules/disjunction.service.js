@@ -20,7 +20,8 @@ angular
       return Premise.new({
         scopeLayer: scope.layer,
         scopeId: scope.id,
-        value: uniqueConclusions[0]
+        value: uniqueConclusions[0],
+        productOf: 'Or Elm.'
       });
 
     }
@@ -66,7 +67,8 @@ angular
         return Premise.new({
           scopeLayer: scope.layer,
           scopeId: scope.id,
-          value: premiseValue + '|' + premisesValue[index]
+          value: premiseValue + '|' + premisesValue[index],
+          productOf: 'Or Int.'
         });
       });
     }

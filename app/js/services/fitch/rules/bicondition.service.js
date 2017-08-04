@@ -46,7 +46,8 @@ angular
         return Premise.new({
           scopeLayer: scope.layer,
           scopeId: scope.id,
-          value: premise.expand(atomicPremise) + '=>' + premise.expand(atomics[index])
+          value: premise.expand(atomicPremise) + '=>' + premise.expand(atomics[index]),
+          productOf: 'Bicon Elm.'
         });
       });
     }
@@ -56,7 +57,8 @@ angular
         return Premise.new({
           scopeLayer: scope.layer,
           scopeId: scope.id,
-          value: premise.getExpandedConclusion(value) + '<=>' + premise.getExpandedAssumption(value)
+          value: premise.getExpandedConclusion(value) + '<=>' + premise.getExpandedAssumption(value),
+          productOf: 'Bicon Int.'
         })
       });
     }

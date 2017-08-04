@@ -1,6 +1,8 @@
 var gulp = require('gulp');
 var connect = require('gulp-connect');
 var jasmine = require('gulp-jasmine-node');
+var bundle = require('gulp-bundle-assets');
+var rimraf = require('gulp-rimraf');
 
 var templates = ['app/index.html', 'app/templates/*.html'];
 var styles = ['app/css/*.css'];
@@ -54,6 +56,33 @@ gulp.task('test', function() {
       timeout: 1000
 
   }))
+});
+
+gulp.task('bundle', ['clean', 'copy-fonts', 'copy-templates'], function() {
+  return gulp.src('./bundle.config.js')
+    .pipe(bundle())
+    .pipe(bundle.results('./'))
+    .pipe(gulp.dest('./public/dist'));
+});
+
+
+gulp.task('clean', function () {
+  return gulp.src(['./public/dist', './public/fonts', './public/templates'], { read: false })
+    .pipe(rimraf());
+});
+
+gulp.task('copy-fonts', function() {
+  return gulp.src([
+    './bower_components/bootstrap/fonts/*'
+  ])
+  .pipe(gulp.dest('./public/fonts'))
+});
+
+gulp.task('copy-templates', function() {
+  return gulp.src([
+    './app/templates/*.html'
+  ])
+  .pipe(gulp.dest('./public/templates'))
 });
 
 gulp.task('default', ['serve', 'livereload', 'watch']);

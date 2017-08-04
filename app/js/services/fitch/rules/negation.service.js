@@ -25,7 +25,8 @@ angular
       return Premise.new({
         scopeLayer: scope.layer,
         scopeId: scope.id,
-  	    value: '~' + newValue
+  	    value: '~' + newValue,
+        productOf: 'Neg Int.'
       });
     };
 
@@ -46,7 +47,8 @@ angular
   		return Premise.new({
         scopeLayer: scope.layer,
         scopeId: scope.id,
-        value: newValue
+        value: newValue,
+        productOf: 'Neg Elm.'
       });
   	};
 

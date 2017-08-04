@@ -26,10 +26,10 @@ angular
       return removedScope[0];
     };
 
-    FitchStack.prototype.openScope = function(headAssumption) {
+    FitchStack.prototype.openScope = function(headAssumption, holdLayer) {
       var scope = Scope.new({
         head: headAssumption,
-        layer: ++scopeLayer
+        layer: (holdLayer) ? scopeLayer : ++scopeLayer
       });
 
       if (this.scopes.length) {

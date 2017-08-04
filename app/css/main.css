@@ -114,6 +114,14 @@ body {
 .universal-scope {
   border-left: 2px solid #33ccff;
 }
+.premises-section {
+    margin-bottom: 10px;
+}
+.history-section {
+    padding: 10px;
+    margin-left: 2rem;
+    font-size: 10px;
+}
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   .assumption-section {

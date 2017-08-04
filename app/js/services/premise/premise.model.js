@@ -13,6 +13,7 @@ angular
       this.scopeLayer = props.scopeLayer;
       this.scopeId = props.scopeId;
       this.value = _removeSpaces(props.value);
+      this.productOf = props.productOf || '';
   	}
 
     Premise.prototype.digest = function(callback) {

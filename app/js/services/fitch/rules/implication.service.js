@@ -29,7 +29,8 @@ angular
       return Premise.new({
         scopeLayer: scope.layer,
         scopeId: scope.id,
-        value: assumption + '=>' + conclusion
+        value: assumption + '=>' + conclusion,
+        productOf: 'Imp Int.'
       });
     };
 
@@ -58,7 +59,8 @@ angular
   			return Premise.new({
   				scopeLayer : scope.layer,
   				scopeId : scope.id,
-  				value: premiseOne.expand(conclusion)
+  				value: premiseOne.expand(conclusion),
+          productOf: 'Imp Elm.'
   			});
   		}
     	return null;
